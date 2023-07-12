@@ -1,0 +1,27 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using InventorySystem.Inventory_;
+
+namespace InventorySystem.Items
+{
+    public class #SCRIPTNAME# : MonoBehaviour, IInteractable
+    {
+        // IInteractable INTERFACE
+        void IInteractable.Interact(Inventory inventory)
+        {
+            #NOTRIM#
+        }
+
+        float IInteractable.interactionTime => 1; // in seconds
+
+        KeyCode IInteractable.interactionKey => InteractionsHandler.defaulInteractionKey;
+
+        bool IInteractable.autoInteractable => true;
+
+        // ITextable INTERFACE
+        public string GetInteractText_normal() => $""; // hovering over item
+
+        public string GetInteractText_interacting() => $""; // interacting with item
+    }
+}

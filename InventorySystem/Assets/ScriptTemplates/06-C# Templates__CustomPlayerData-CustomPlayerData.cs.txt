@@ -1,0 +1,22 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using InventorySystem.Inventory_;
+
+namespace InventorySystem.SaveAndLoadSystem_
+{
+    public class #SCRIPTNAME# : PlayerData
+    {
+        // Save your player here
+        public CustomPlayerData(InventoryCore p, Skills s, EffectsHandler eH, Inventory i, CollectibleItemsManager cM) : base(p, s, eH, i, cM)
+        {
+            #NOTRIM#
+        }
+
+        // Load your player here
+        public override void LoadData(InventoryCore p)
+        {
+            #NOTRIM#
+        }
+    }
+}

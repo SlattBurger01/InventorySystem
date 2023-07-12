@@ -1,0 +1,19 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using InventorySystem.Inventory_;
+
+namespace InventorySystem.Prefabs
+{
+    public class #SCRIPTNAME# : PrefabsSpawner
+    {
+       static #SCRIPTNAME#() => InventoryPrefabsSpawner.spawner = new #SCRIPTNAME#();
+    
+       public override GameObject SpawnCategoryPrefab(GameObject categoryPrefab, bool isSelected, Transform parent, ItemCategory category, UnityAction onClickAction) 
+       {
+            // Spawn your object here and return it
+            return null; 
+       }
+    }
+
+}

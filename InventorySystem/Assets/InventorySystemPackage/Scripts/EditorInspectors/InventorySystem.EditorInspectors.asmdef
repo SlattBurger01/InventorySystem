@@ -1,0 +1,19 @@
+{
+    "name": "InventorySystem.EditorInspectors",
+    "rootNamespace": "",
+    "references": [
+        "GUID:c21e0af72d4504d4aa6023c18173f273",
+        "GUID:d5fc5b3f2695b594399cfd131ec1f165"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b501dbd0e6fe5d940b4543a98d38b582, type: 3}
+  m_Name: TestItem
+  m_EditorClassIdentifier: 
+  pickupTime: 2
+  name: TestItem
+  description: Very cool item
+  category: {fileID: 11400000, guid: 23d1b4e5043b6c14b867200ca53f0283, type: 2}
+  rarity: {fileID: 11400000, guid: 55d400f925219144da1fa87a8706590a, type: 2}
+  icon: {fileID: 2800000, guid: 09b7ee497748cdc46ae4bd11477d7857, type: 3}
+  maxStackCount: 1
+  object3D: {fileID: 6228867418575048058, guid: 2613aeaf7263d014aa6177ebc0533cbb,
+    type: 3}
+  inHandScaleMultiplayer_: 1
+  InHandOffset: {x: 0, y: 0, z: 0}
+  equipPosition: {fileID: 11400000, guid: fa230d4cedf2dca41a324bba8840d63a, type: 2}
+  inHandIsEquiped: 0
+  buyCurrency: {fileID: 11400000, guid: 66b33114555777245bd29a8e89072039, type: 2}
+  buyPrice: 5
+  sellCurrency: {fileID: 11400000, guid: 17542979138d1ea449e59779b634e132, type: 2}
+  sellPrice: 10
+  baseStatsOnDurability: 0
+  maxDurability: 0
+  minDamage: 0
+  maxDamage: 0
+  interactionRayDelay: 0
+  destroyOnZeroDurability: 0
+  destroyedIcon: {fileID: 0}
+  useableOptions: []
+  maxStackCountInPickupableItem: 1
+  valueNames: []
+  valuesIds: []
+  boolValues: 
+  byteValues: 
+  intValues: 
+  floatValues: []
+  stringValues: []

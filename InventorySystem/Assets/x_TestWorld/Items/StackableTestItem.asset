@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b501dbd0e6fe5d940b4543a98d38b582, type: 3}
+  m_Name: StackableTestItem
+  m_EditorClassIdentifier: 
+  pickupTime: 0
+  name: StackableTestItem
+  description: Very cool item, but you can stack it !
+  category: {fileID: 11400000, guid: a0a20be33908b5b4a80405f7eb8f3748, type: 2}
+  rarity: {fileID: 11400000, guid: 55d400f925219144da1fa87a8706590a, type: 2}
+  icon: {fileID: 0}
+  maxStackCount: 12
+  object3D: {fileID: 7951952949406266421, guid: eb7dbfcae3c433c4f849159b870354d2,
+    type: 3}
+  inHandScaleMultiplayer_: 1
+  InHandOffset: {x: 0, y: 0, z: 0}
+  equipPosition: {fileID: 11400000, guid: fa230d4cedf2dca41a324bba8840d63a, type: 2}
+  inHandIsEquiped: 0
+  buyCurrency: {fileID: 11400000, guid: 66b33114555777245bd29a8e89072039, type: 2}
+  buyPrice: 20
+  sellCurrency: {fileID: 11400000, guid: 17542979138d1ea449e59779b634e132, type: 2}
+  sellPrice: 50
+  baseStatsOnDurability: 0
+  maxDurability: 0
+  minDamage: 0
+  maxDamage: 0
+  interactionRayDelay: 0
+  destroyOnZeroDurability: 0
+  destroyedIcon: {fileID: 0}
+  useableOptions: []
+  maxStackCountInPickupableItem: 12
+  valueNames: []
+  valuesIds: []
+  boolValues: 00
+  byteValues: 
+  intValues: 
+  floatValues: []
+  stringValues: []

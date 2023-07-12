@@ -1,0 +1,19 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using InventorySystem.Inventory_;
+
+namespace InventorySystem.Prefabs
+{
+    public class #SCRIPTNAME# : PrefabUpdator
+    {
+        static #SCRIPTNAME#() => InventoryPrefabsUpdator.updator = new #SCRIPTNAME#();
+    
+        // !!! THIS IS EXAMPLE HOW TO OVERRIDE UPDATING ---> IF YOU ARE NOT GOING TO OVERRIDE CATEGORY SPAWNING DELETE THIS VOID !!!
+        public override void CategoryPrefab_UpdateAll(InventoryPrefab prefab, ItemCategory category, float opacity, UnityAction onClickAction)
+        {
+            // Update your object here
+        }
+    }
+
+}

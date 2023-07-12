@@ -1,0 +1,27 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using InventorySystem.Inventory_;
+
+namespace InventorySystem.Effects_
+{
+    [CreateAssetMenu(fileName = "NewEffect_#SCRIPTNAME#", menuName = "Effects/#SCRIPTNAME#")]
+    public class #SCRIPTNAME# : Effect
+    {
+        public override void OnEffectAdded(Inventory inventory)
+        {
+            #NOTRIM#
+        }
+
+        // CALLLED EACH FRAME WHEN EFFECT IS ACTIVE: WRITE WHAT EFFECT DOES IN HERE
+        public override void EffectLoop(Inventory inventory)
+        {
+            #NOTRIM#
+        }
+        
+        public override void OnEffectRemoved(Inventory inventory)
+        {
+            #NOTRIM#
+        }
+    }
+}

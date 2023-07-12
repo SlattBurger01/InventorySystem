@@ -1,0 +1,12 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using InventorySystem.Inventory_;
+
+namespace InventorySystem.SaveAndLoadSystem_
+{
+    public class #SCRIPTNAME# : DefaultDataLoader
+    {
+        static #SCRIPTNAME#() => DataLoader.loader = new #SCRIPTNAME#();
+    }
+}0

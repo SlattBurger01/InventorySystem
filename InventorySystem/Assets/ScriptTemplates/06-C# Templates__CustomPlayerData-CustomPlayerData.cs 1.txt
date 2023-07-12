@@ -1,0 +1,24 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using InventorySystem.Inventory_;
+
+namespace InventorySystem.Prefabs
+{
+    public class #SCRIPTNAME# : PrefabsSpawner
+    {
+       [InitializeOnLoadMethod]
+       private static void OnLoad()
+       {
+           InventoryPrefabsSpawner.spawner = new #SCRIPTNAME#();
+       }
+    
+       // !!! THIS IS EXAMPLE HOW TO OVERRIDE SPAWNING ---> IF YOU ARE NOT GOING TO OVERRIDE CATEGORY SPAWNING DELETE THIS VOID !!!
+       public override GameObject SpawnCategoryPrefab(GameObject categoryPrefab, bool isSelected, Transform parent, ItemCategory category, UnityAction onClickAction) 
+       {
+            // Spawn your object here and return it
+            return null; 
+       }
+    }
+
+}

@@ -1,0 +1,59 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b501dbd0e6fe5d940b4543a98d38b582, type: 3}
+  m_Name: EquitableTestItem
+  m_EditorClassIdentifier: 
+  pickupTime: 0
+  name: EquitableTestItem
+  description: 
+  category: {fileID: 11400000, guid: 74431240a4b1f3b4a928253816b2b94c, type: 2}
+  rarity: {fileID: 11400000, guid: 55d400f925219144da1fa87a8706590a, type: 2}
+  icon: {fileID: 0}
+  maxStackCount: 1
+  object3D: {fileID: 5051844186219323495, guid: f580caeb59da81b48adb7895662b70eb,
+    type: 3}
+  inHandScaleMultiplayer_: 1
+  InHandOffset: {x: 0, y: 0, z: 0}
+  equipPosition: {fileID: 11400000, guid: fa230d4cedf2dca41a324bba8840d63a, type: 2}
+  inHandIsEquiped: 0
+  buyCurrency: {fileID: 11400000, guid: 66b33114555777245bd29a8e89072039, type: 2}
+  buyPrice: 50
+  sellCurrency: {fileID: 11400000, guid: 17542979138d1ea449e59779b634e132, type: 2}
+  sellPrice: 50
+  baseStatsOnDurability: 0
+  maxDurability: 0
+  minDamage: 0
+  maxDamage: 0
+  interactionRayDelay: 0
+  destroyOnZeroDurability: 0
+  destroyedIcon: {fileID: 0}
+  useableOptions: []
+  maxStackCountInPickupableItem: 0
+  valueNames:
+  - addStamina
+  - addHps
+  - addArmor
+  - addStrenght
+  valuesIds:
+  - 3-0
+  - 3-1
+  - 3-2
+  - 3-3
+  boolValues: 
+  byteValues: 
+  intValues: 
+  floatValues:
+  - -25
+  - 10
+  - 25
+  - 1
+  stringValues: []

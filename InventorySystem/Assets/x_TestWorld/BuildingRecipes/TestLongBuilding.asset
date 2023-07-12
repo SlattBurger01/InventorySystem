@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a9f73fd53e7a7541963458e7808d92c, type: 3}
+  m_Name: TestLongBuilding
+  m_EditorClassIdentifier: 
+  name: TestLongBuilding
+  object3D: {fileID: 4761891409434997078, guid: a9d376f4d293ce54aaa75771871097aa,
+    type: 3}
+  icon: {fileID: 2800000, guid: a85980ad4f4faaa4bb98772f7e79c2b0, type: 3}
+  scaleIcon: {fileID: 2800000, guid: d2210c77c8903f941b8dcda92f04abcc, type: 3}
+  description: 
+  requiedItems: []
+  requiedItemsCount: 
+  lockedUnderSkill: []
+  lockedUnderSkillLevel: 

@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f244a693386233a45b79c766b6d0d1b0, type: 3}
+  m_Name: StackableTestItemRecipe
+  m_EditorClassIdentifier: 
+  requiedItems:
+  - {fileID: 11400000, guid: e528ee7ff368df343b14e98fa381ba6d, type: 2}
+  requiedItemsCount: 05000000
+  output: {fileID: 11400000, guid: 907fe62a43cebfb438221acc626481f4, type: 2}
+  outputCount: 1
+  craftTime: 0
+  description: 
+  lockedUnderSkill:
+  - TestSkill
+  lockedUnderLevel: 02000000

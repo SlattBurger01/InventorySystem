@@ -1,0 +1,39 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+namespace InventorySystem.PageContent
+{
+    // DON'T FORGE TO USE "InventoryContent_PageContent" NAMESPACE TO USE THIS CLASS
+    public class #SCRIPTNAME# : InventoryPageContent
+    {
+        protected override void GetComponents() 
+        { 
+            #NOTRIM#
+        }
+
+        // CALLED ON PAGE SETUP
+        public override void SetUpContent()
+        {
+            #NOTRIM#
+        }
+
+        // CALLED BEFORE PAGE IS UPDATED 
+        public override void BeforePageUpdated(bool viaButton) 
+        {
+            #NOTRIM#
+        }
+
+        // CALLED ON INVENTORY PAGE RELOAD
+        public override void UpdateContent(bool viaButton) 
+        {
+            #NOTRIM#
+        }
+
+        // CALLED AFTER PAGE IS UPDATED
+        public override void OnParentPageOpened() 
+        {
+            #NOTRIM#
+        }
+    }
+}

@@ -1,0 +1,38 @@
+using UnityEditor;
+using UnityEngine;
+
+[CustomPropertyDrawer(typeof(DragAndSetAttribute))]
+public class DragAndSetAttributeDrawer : PropertyDrawer
+{
+    public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+    {
+        EditorGUI.PropertyField(position, property, label);
+        DropAreaGUI(position, property);
+    }
+
+    public void DropAreaGUI(Rect position, SerializedProperty property)
+    {
+        Event evt = Event.current;
+
+        switch (evt.type)
+        {
+            //case EventType.DragUpdated:
+            case EventType.DragPerform:
+                if (!position.Contains(evt.mousePosition)) return;
+
+                DragAndDrop.visualMode = DragAndDropVisualMode.Copy;
+
+                if (evt.type == EventType.DragPerform)
+                {
+                    DragAndDrop.AcceptDrag();
+
+                    DragAndSetAttribute.OnDragCompleted(property, DragAndDrop.objectReferences);
+
+                    /*Object obj = property.serializedObject.targetObject;
+
+                    if (obj is ListContentDisplayer) (obj as ListContentDisplayer).OnDragAndSet(property.name, DragAndDrop.objectReferences);*/
+                }
+                break;
+        }
+    }
+}

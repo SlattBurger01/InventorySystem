@@ -1,0 +1,21 @@
+fileFormatVersion: 2
+guid: 16f61b3c96d6c9d4a9bd5de6f7a078c7
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - pickupableItemNameText: {instanceID: 0}
+  - crossHair: {instanceID: 0}
+  - hotbarSlotsParent: {instanceID: 0}
+  - selectedHotbarslotBackground: {instanceID: 0}
+  - openedStorage: {instanceID: 0}
+  - itemPrefab: {fileID: 9011100614314268176, guid: ad4dfb8b751528947aa0fea88c48398b,
+      type: 3}
+  - categoryPrefab: {instanceID: 0}
+  - categoriesParent: {instanceID: 0}
+  - testEquipPosition: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
