@@ -4,15 +4,17 @@ using UnityEngine;
 using InventorySystem;
 
 [CreateAssetMenu(menuName = CreateAssetMenuPaths.currenciesHandler)]
-public class CurrenciesHandler : EnumBehaviour_Scriptable
+public class CurrenciesHandler : ScriptableObject, IEnumBehaviour
 {
+    private IEnumBehaviour Eb => this;
+
     public Currency[] currencies;
 
-    public override int GetLenght() => currencies.Length;
+    public int GetLenght() => currencies.Length;
 
-    public override int GetId(object o) => base.GetId<Currency>((Currency)o, currencies);
+    public int GetId(object o) => Eb.GetId<Currency>((Currency)o, currencies);
 
-    public override Object GetObjectRefference(int i) => base.GetObjectRefference<Currency>(i, currencies);
+    public Object GetObjectRefference(int i) => Eb.GetObjectRefference<Currency>(i, currencies);
 
-    public override string GetDisplayNameOfId(int id) { return currencies[id].name; }
+    public string GetDisplayNameOfId(int id) { return currencies[id].name; }
 }

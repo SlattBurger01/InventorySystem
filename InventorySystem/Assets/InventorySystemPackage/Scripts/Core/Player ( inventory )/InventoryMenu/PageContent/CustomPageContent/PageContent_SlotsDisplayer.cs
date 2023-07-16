@@ -5,6 +5,7 @@ using InventorySystem.Inventory_;
 
 namespace InventorySystem.PageContent
 {
+    // This class cannot use void "Awake()" so awake void on base is called correctly !
     [AddComponentMenu(CreateAssetMenuPaths.slotsDisplayer)]
     public class PageContent_SlotsDisplayer : InventoryPageContent // EVERY CHILD OF THIS TRANSFORM IS PART OF THIS DISPLAYER, USING MORE THAN ONE DISPLAYER FOR ONE SLOT IS NOT SUPPORTED
     {
@@ -22,12 +23,17 @@ namespace InventorySystem.PageContent
         private int currentlySelectedPage = 1; // lowest allowed value is 1
         private int pagesCount;
 
-        [Header("")]
+        [Header("---")]
+        [UnnecessaryProperty(0)]
         public ArrowsHolder arrows;
-        [SerializeField] private Slider currentPageSlider; // HAS TO BE SETTED UP MANUALLY
+
+        [UnnecessaryProperty]
+        [SerializeField] private Slider currentPageSlider;
+
+        [UnnecessaryProperty]
         [SerializeField] private TextMeshProUGUI currentPageText;
 
-        [Header("")]
+        [Header("---")]
         public PageContent_ItemDisplayer selectedItemDisplayer;
         [SerializeField] private PageContent_CategorySelector categorySelector;
 
@@ -39,8 +45,12 @@ namespace InventorySystem.PageContent
 
         protected override void GetComponents()
         {
-            inventory = GetComponentInParent<Inventory>();
-            menu = GetComponentInParent<InventoryMenu>();
+            print("Getting components");
+
+            inventory = GetComponentInParent<Inventory>(true);
+            menu = GetComponentInParent<InventoryMenu>(true);
+
+            CheckForErrors();
         }
 
         public override void BeforePageUpdated(bool viaButton)
@@ -85,6 +95,18 @@ namespace InventorySystem.PageContent
             UpdateArrowsButton();
 
             if (currentPageSlider) currentPageSlider.onValueChanged.AddListener(OnPageSliderValueChange);
+        }
+
+        private void CheckForErrors()
+        {
+            if (targetSlotsType != SlotsType.equipPositions) return;
+
+            Slot[] slots = GetComponentsInChildren<Slot>(true);
+
+            for (int i = 0; i < slots.Length; i++)
+            {
+                if (EquipPosition.IsNone(slots[i].equipPosition)) Debug.LogError($"Equipable slot has to have assigned equip position! ({this})");
+            }
         }
 
         /// <summary> Sets values of childs slots </summary>
@@ -175,23 +197,22 @@ namespace InventorySystem.PageContent
             }
         }
 
+        /// <summary> 'categorySelector' is necessary for correct functionality </summary>
+        /// <returns> if item category is same as catefory selectors selected category (for each item, array is based on inventory.itemsInInventory) </returns>
         private bool[] GetSelectedData()
         {
             bool[] returnValue = new bool[slots.Length];
 
             for (int i = 0; i < returnValue.Length; i++) returnValue[i] = true;
 
-            if (categorySelector)
+            if (categorySelector && categorySelector.selectedCategory != null)
             {
-                if (categorySelector.selectedCategory != null)
+                for (int i = 0; i < slots.Length; i++)
                 {
-                    for (int i = 0; i < slots.Length; i++)
+                    ItemInInventory item = inventory.itemsInInventory[slots[i].id];
+                    if (item != null)
                     {
-                        ItemInInventory item = inventory.itemsInInventory[slots[i].id];
-                        if (item != null)
-                        {
-                            returnValue[i] = item.item.category == categorySelector.selectedCategory;                        
-                        }
+                        returnValue[i] = item.item.category == categorySelector.selectedCategory;
                     }
                 }
             }
@@ -201,9 +222,9 @@ namespace InventorySystem.PageContent
 
         private void UpdateArrows()
         {
-            Button[] a = arrows.ArrowsArray;
-
             if (arrows.NonNullLenghtIsZero) return;
+
+            Button[] a = arrows.ArrowsArray;
 
             for (int i = 0; i < a.Length; i++)
             {
@@ -231,7 +252,6 @@ namespace InventorySystem.PageContent
             if (arrows.leftArrow) arrows.leftArrow.GetComponent<Button>().onClick.AddListener(delegate { OnArrowPressed(false, false); });
         }
 
-        /// <summary>  </summary>
         public void OnArrowPressed(bool right, bool updateImidiatelly) // TRANSFERING ITEM THROUGH PAGES ? "updateImidiatelly" : "!updateImidiatelly"
         {
             currentlySelectedPage += right ? 1 : -1;
@@ -242,7 +262,7 @@ namespace InventorySystem.PageContent
             menu.UpdateOpenedPage(updateImidiatelly);
         }
 
-        /// <summary>  </summary>
+        /// <summary> Called from selected page slider (if interactable) </summary>
         private void OnPageSliderValueChange(float val)
         {
             currentlySelectedPage = (int)val;

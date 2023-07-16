@@ -30,13 +30,13 @@ namespace InventorySystem.Crafting_ // PageContent_CraftingMenu, CraftingActionB
 
             for (int i = 0; i < recipes.Length; i++)
             {
-                GameObject recipeObj = SpawnRecipe(calledFrom.scrollableItemDisplayer.ContentParent, recipes[i]);
+                GameObject recipeObj = SpawnRecipe(calledFrom.recipesDisplayer.ContentParent, recipes[i]);
                 CraftingRecipe tempRecipe = recipes[i];
                 recipeObj.GetComponent<Button>().onClick.AddListener(delegate { SelectRecipe(tempRecipe, craftButton, reqItemScrollableContent, calledFrom); });
                 spawnedObjects.Add(recipeObj);
             }
 
-            calledFrom.scrollableItemDisplayer.SetDisplayedContent_(spawnedObjects);
+            calledFrom.recipesDisplayer.SetDisplayedContent_(spawnedObjects);
 
             // SELECT SOME CRAFTING RECIPE
             int useRecentlySelectedRecipe = -1;

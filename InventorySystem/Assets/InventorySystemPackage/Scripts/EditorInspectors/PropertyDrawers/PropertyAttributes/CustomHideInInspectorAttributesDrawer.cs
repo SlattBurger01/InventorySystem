@@ -1,39 +1,46 @@
 using UnityEditor;
 using UnityEngine;
+using cHelper = CustomInspectorHelper;
 
 [CustomPropertyDrawer(typeof(HideInNormalInspectorAttribute))]
 public class HideInNormalInspectorAttribute_PropertyDrawer : PropertyDrawer
 {
-    public override void OnGUI(Rect position, SerializedProperty property, GUIContent label) { } // KEEP THIS EMPTY SO NOTHING IS DISPLAYED
+    public override void OnGUI(Rect pos, SerializedProperty prop, GUIContent label) { } // keep empty so nothing is displayer
 
-    public override float GetPropertyHeight(SerializedProperty property, GUIContent label) { return -18f; } // '18' IS DEFAULT PROPERTY HEIGHT -> THIS COMPENSATES THE GAP
+    public override float GetPropertyHeight(SerializedProperty property, GUIContent label) { return 0; }
 }
 
 [CustomPropertyDrawer(typeof(HideInSinglePlayerInspectorAttribute))]
 public class HideInSinglePlayerInspectorAttribute_PropertyDrawer : PropertyDrawer
 {
-    public override void OnGUI(Rect position, SerializedProperty property, GUIContent label) => HideAttributesHelper.DrawHiddenAttribute(position, property, label, CustomInspectorHelper.HideInSinglePlayerMode, 'm');
+    private static bool cBool => cHelper.HideInSinglePlayerMode;
 
-    public override float GetPropertyHeight(SerializedProperty property, GUIContent label) => CustomInspectorHelper.GetPropertyHeight(CustomInspectorHelper.HideInSinglePlayerMode);
+    public override void OnGUI(Rect pos, SerializedProperty prop, GUIContent label) => HideAttributesHelper.DrawHiddenAttribute(pos, prop, label, cBool, 'm');
+
+    public override float GetPropertyHeight(SerializedProperty prop, GUIContent label) => cHelper.GetPropertyHeight(cBool);
 }
 
 [CustomPropertyDrawer(typeof(DebugAttribute))]
 public class DebugAttributeDrawer : PropertyDrawer
 {
-    public override void OnGUI(Rect position, SerializedProperty property, GUIContent label) => HideAttributesHelper.DrawHiddenAttribute(position, property, label, CustomInspectorHelper.DebugMode, '¤');
+    private static bool cBool => cHelper.DebugMode;
 
-    public override float GetPropertyHeight(SerializedProperty property, GUIContent label) => CustomInspectorHelper.GetPropertyHeight(CustomInspectorHelper.DebugMode);
+    public override void OnGUI(Rect pos, SerializedProperty prop, GUIContent label) => HideAttributesHelper.DrawHiddenAttribute(pos, prop, label, cBool, '¤');
+
+    public override float GetPropertyHeight(SerializedProperty prop, GUIContent label) => cHelper.GetPropertyHeight(cBool);
 }
 
 public static class HideAttributesHelper
 {
     public static void DrawHiddenAttribute(Rect pos, SerializedProperty prop, GUIContent label, bool customB, char labelPrefix)
     {
-        if (!CustomInspectorHelper.CreateCustomInspector(pos, prop, label)) return;
+        if (!cHelper.CreateCustomPropertyField(pos, prop, label)) return;
 
         if (!customB) return;
 
-        label.text = $"{labelPrefix} {label.text}";
+        string prefix = labelPrefix.ToString() == "" ? $"{labelPrefix} " : "";
+
+        label.text = $"{prefix}{label.text}";
         EditorGUI.PropertyField(pos, prop, label);
     }
 }

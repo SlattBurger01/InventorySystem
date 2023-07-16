@@ -17,6 +17,7 @@ namespace InventorySystem.PhotonPun
         private void Awake()
         {
             saveAndLoadSystem = GetComponent<SaveAndLoadSystem>();
+            view = GetComponent<PhotonView>();
 
             saveAndLoadSystem.requestPlayersData += RequestPlayersData;
             saveAndLoadSystem.updatePlayersCount += UpdatePlayersCount;
@@ -27,11 +28,6 @@ namespace InventorySystem.PhotonPun
             SaveAndLoadSystem.clearBuildings += ClearBuildings;
         }
 
-        private void Start()
-        {
-            view = GetComponent<PhotonView>();
-        }
-
         private void RequestPlayersData()
         {
             view.RPC("SendLocalPlayersData", RpcTarget.All);
@@ -39,7 +35,9 @@ namespace InventorySystem.PhotonPun
 
         private void SendPlayersDataToLoad(byte[] data, InventoryCore targetPlayer)
         {
-            Photon.Realtime.Player target = targetPlayer.GetComponent<PhotonView>().Owner != null ? targetPlayer.GetComponent<PhotonView>().Owner : PhotonNetwork.MasterClient;
+            PhotonView targetView = targetPlayer.GetComponent<PhotonView>();
+
+            Photon.Realtime.Player target = targetView.Owner ?? PhotonNetwork.MasterClient;
             view.RPC("LoadLocalPlayer", target, data);
         }
 
@@ -67,7 +65,7 @@ namespace InventorySystem.PhotonPun
         private void SendLocalPlayersData()
         {
             SaveData data = saveAndLoadSystem.SaveLocalPlayer();
-            GetComponent<PhotonView>().RPC("SendPlayerData", RpcTarget.MasterClient, Serializer.Serialize(data));
+            view.RPC("SendPlayerData", RpcTarget.MasterClient, Serializer.Serialize(data));
         }
 
         [PunRPC]

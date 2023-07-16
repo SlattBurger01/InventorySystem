@@ -9,10 +9,12 @@ namespace InventorySystem.PhotonPun
     public class PhotonInventoryGameManager : MonoBehaviour
     {
         private static InventoryGameManager inventoryGameManager;
+        private PhotonView view;
 
         private void Awake()
         {
             inventoryGameManager = FindObjectOfType<InventoryGameManager>();
+            view = GetComponent<PhotonView>();
 
             InventoryGameManager.updateIsMasterclientBool += UpdateIsMasterClient;
             InventoryGameManager.spawnGameObject += SpawnGameObject;
@@ -22,7 +24,6 @@ namespace InventorySystem.PhotonPun
             InventoryGameManager.inializeMultiplayerGame += InializeMultiplayerGame;
             InventoryGameManager.destroyObject += DestroyObject;
             InventoryGameManager.setPlayerNickname += SetPlayersNickname;
-
             InventoryGameManager.syncIDamagableTakeDamage += SyncIDamagableTakeDamage;
         }
 
@@ -33,7 +34,7 @@ namespace InventorySystem.PhotonPun
 
             if (offlineMode) { creator.InializeMultiplayerGame_OfflineMode(creator, inventoryGameManager); return; }
 
-            loadingScreensHandler.EnableLoadingScreen(0, true);
+            if (loadingScreensHandler) loadingScreensHandler.EnableInializeGameLoadingScreen(true);
 
             Destroy(FindObjectOfType<InventoryCore>().gameObject);
 
@@ -47,12 +48,12 @@ namespace InventorySystem.PhotonPun
 
         private void DestroyObject(GameObject obj)
         {
-            PhotonView view = obj.GetComponent<PhotonView>();
+            PhotonView view_ = obj.GetComponent<PhotonView>();
 
             if (view.ViewID == 0) return; // PHOTON VIEW IS NOT VALID
 
-            if (view.Owner != null) GetComponent<PhotonView>().RPC("DestroyObjectF", view.Owner, view.ViewID);
-            else GetComponent<PhotonView>().RPC("DestroyObjectF", RpcTarget.MasterClient, view.ViewID);
+            if (view.Owner != null) view.RPC("DestroyObjectF", view_.Owner, view_.ViewID);
+            else view.RPC("DestroyObjectF", RpcTarget.MasterClient, view_.ViewID);
         }
 
         [PunRPC]
@@ -60,9 +61,9 @@ namespace InventorySystem.PhotonPun
 
         private void SetItemCount(PickupableItem item, int itemCount)
         {
-            PhotonView view = item.GetComponent<PhotonView>();
+            PhotonView view_ = item.GetComponent<PhotonView>();
 
-            GetComponent<PhotonView>().RPC("SetItemCountF", RpcTarget.All, view.ViewID, itemCount);
+            view.RPC("SetItemCountF", RpcTarget.All, view_.ViewID, itemCount);
         }
 
         [PunRPC]
@@ -74,7 +75,7 @@ namespace InventorySystem.PhotonPun
 
         private void SetDurabilityToPItem(PickupableItem pItem, float itemDurability)
         {
-            GetComponent<PhotonView>().RPC("SetDurabilityToPItemF", RpcTarget.All, pItem.GetComponent<PhotonView>().ViewID, itemDurability);
+            view.RPC("SetDurabilityToPItemF", RpcTarget.All, pItem.GetComponent<PhotonView>().ViewID, itemDurability);
         }
 
         [PunRPC]
@@ -86,7 +87,7 @@ namespace InventorySystem.PhotonPun
 
         private void SetPlayersNickname(InventoryCore player, string name)
         {
-            GetComponent<PhotonView>().RPC("SetPlayersNicknameF", RpcTarget.AllBuffered, player.GetComponent<PhotonView>().ViewID, name);
+            view.RPC("SetPlayersNicknameF", RpcTarget.AllBuffered, player.GetComponent<PhotonView>().ViewID, name);
         }
 
         [PunRPC]
@@ -105,7 +106,7 @@ namespace InventorySystem.PhotonPun
         {
             PhotonView targetView = targetViewComp.GetComponent<PhotonView>();
 
-            GetComponent<PhotonView>().RPC("SyncTakeDamageF", RpcTarget.All, targetView.ViewID, damage);
+            view.RPC("SyncTakeDamageF", RpcTarget.All, targetView.ViewID, damage);
         }
 
         [PunRPC]
@@ -114,7 +115,7 @@ namespace InventorySystem.PhotonPun
         public void OnRoomJoined(bool offline)
         {
             // SPAWN PLAYER BEFORE LOADING DATA
-            if (offline) InventoryGameManager.SpawnPlayer(InventoryGameManager.defeaultPlayerSpawnPos);
+            if (offline) InventoryGameManager.SpawnPlayer(InventoryGameManager.defaultPlayerSpawnPos);
             else inventoryGameManager.localPlayer = FindObjectOfType<InventoryCore>();
 
             SetPlayersNickname(inventoryGameManager.localPlayer, InventoryGameManager.playersName);
@@ -122,16 +123,15 @@ namespace InventorySystem.PhotonPun
             if (PhotonNetwork.IsMasterClient)
             {
                 InventoryGameManager.TrySetUpSaveAndLoadSystemAndLoadRecentSave();
-
                 FindObjectOfType<PickupableItemsStacksHandler>().StartLoop();
             }
             else
             {
                 LoadingScreensHandler loadingScreensHandler = FindObjectOfType<LoadingScreensHandler>();
-                loadingScreensHandler.EnableLoadingScreen(2, true);
+                if (loadingScreensHandler) loadingScreensHandler.EnableSyncGameLoadingScreen(true);
 
                 print("Sending on player joined");
-                GetComponent<PhotonView>().RPC("OnPlayerJoined", RpcTarget.MasterClient, InventoryGameManager.playersName);
+                view.RPC("OnPlayerJoined", RpcTarget.MasterClient, InventoryGameManager.playersName);
             }
         }
 

@@ -118,7 +118,7 @@ namespace InventorySystem.PageContent
 
             Dictionary<int, bool> slotsSelectedData_ = new Dictionary<int, bool>();
 
-            // IF YOU GET ERROR HERE: MAKE SURE ALL USED EQUIP POSITIONS ARE ADDED INTO 'Inventory.equipPositions'
+            // IF YOU GET ERROR HERE: make sure all equip positions are in 'EquipPositionsHandler' & 'EquipTransforms' are assigned correctly in Inventory.cs
             for (int i = 0; i < slots.Length; i++) 
             {
                 try { slotsSelectedData_.Add(slots[i].id, slotsSelectedData[i]); }

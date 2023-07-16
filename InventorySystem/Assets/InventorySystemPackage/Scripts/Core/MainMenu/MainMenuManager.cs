@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
@@ -6,15 +5,23 @@ using System.IO;
 using UnityEngine.SceneManagement;
 using UnityEngine.EventSystems;
 using System.Linq;
-using UnityEngine.Playables;
 using InventorySystem.SaveAndLoadSystem_;
 
 namespace InventorySystem.MainMenu
 {
     public class MainMenuManager : MonoBehaviour
     {
+        [Tooltip("Scene that is going to be loaded after game was joined (actual joining is executed in target scene)")]
+        [SerializeField] private int targetSceneId = 1;
+
         [SerializeField] private GameObject mainMenuDef;
-        [SerializeField] private GameObject createGameMenu, loadGameMenu, joinGameMenu;
+
+        [Header("MENUS")]
+        [SerializeField] private GameObject createGameMenu;
+        [SerializeField] private GameObject loadGameMenu;
+        [SerializeField] private GameObject joinGameMenu;
+
+        [Header("INPUTS")]
         [SerializeField] private TMP_InputField newGameInput;
         [SerializeField] private TMP_InputField nickNameInput;
         [SerializeField] private TMP_InputField joinGameInput;
@@ -109,7 +116,7 @@ namespace InventorySystem.MainMenu
             InventoryGameManager.roomName = newGameInput.text;
             InventoryGameManager.createRoom = true;
 
-            SceneManager.LoadScene(1);
+            SceneManager.LoadScene(targetSceneId);
         }
 
         public void JoinGame()
@@ -118,7 +125,7 @@ namespace InventorySystem.MainMenu
             InventoryGameManager.roomName = joinGameInput.text;
             InventoryGameManager.createRoom = false;
 
-            SceneManager.LoadScene(1);
+            SceneManager.LoadScene(targetSceneId);
         }
 
         public void OnBackButtonPressed()

@@ -239,7 +239,7 @@ namespace InventorySystem.SaveAndLoadSystem_ // PhotonInventoryGameManager, Phot
             Console.Add("LOADING GAME", FindObjectOfType<Console>(), ConsoleCategory.SaveAndLoadSystem);
 
             LoadingScreensHandler loadingScreensHandler = FindObjectOfType<LoadingScreensHandler>();
-            loadingScreensHandler.EnableLoadingScreen(1, true);
+            if(loadingScreensHandler) loadingScreensHandler.EnableLoadGameLoadingScreen(true);
 
             while (true)
             {
@@ -353,8 +353,11 @@ namespace InventorySystem.SaveAndLoadSystem_ // PhotonInventoryGameManager, Phot
         {
             LoadingScreensHandler loadingScreensHandler = FindObjectOfType<LoadingScreensHandler>();
 
-            loadingScreensHandler.EnableLoadingScreen(1, false);
-            loadingScreensHandler.EnableLoadingScreen(2, false);
+            if (loadingScreensHandler)
+            {
+                loadingScreensHandler.EnableLoadGameLoadingScreen(false);
+                loadingScreensHandler.EnableSyncGameLoadingScreen(false);
+            }
         }
     }
 }

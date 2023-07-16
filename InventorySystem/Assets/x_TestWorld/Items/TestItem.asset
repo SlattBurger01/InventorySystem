@@ -23,7 +23,7 @@ MonoBehaviour:
     type: 3}
   inHandScaleMultiplayer_: 1
   InHandOffset: {x: 0, y: 0, z: 0}
-  equipPosition: {fileID: 11400000, guid: fa230d4cedf2dca41a324bba8840d63a, type: 2}
+  equipPosition: {fileID: 0}
   inHandIsEquiped: 0
   buyCurrency: {fileID: 11400000, guid: 66b33114555777245bd29a8e89072039, type: 2}
   buyPrice: 5

@@ -4,15 +4,17 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = CreateAssetMenuPaths.equipPositionsHandler)]
-public class EquipPositionsHandler : EnumBehaviour_Scriptable
+public class EquipPositionsHandler : ScriptableObject, IEnumBehaviour
 {
+    private IEnumBehaviour Eb => this;
+
     public EquipPosition[] equipPositions;
 
-    public override int GetLenght() => equipPositions.Length;
+    public int GetLenght() => equipPositions.Length;
 
-    public override int GetId(object o) => base.GetId<EquipPosition>((EquipPosition)o, equipPositions);
+    public int GetId(object o) => Eb.GetId<EquipPosition>((EquipPosition)o, equipPositions);
 
-    public override Object GetObjectRefference(int i) => base.GetObjectRefference<EquipPosition>(i, equipPositions);
+    public Object GetObjectRefference(int i) => Eb.GetObjectRefference<EquipPosition>(i, equipPositions);
 
-    public override string GetDisplayNameOfId(int id) { return equipPositions[id].name; }
+    public string GetDisplayNameOfId(int id) { return equipPositions[id].name; }
 }

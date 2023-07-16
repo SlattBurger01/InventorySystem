@@ -9,18 +9,18 @@ using Object = UnityEngine.Object;
 
 public class EnumBehaviour_Drawer : PropertyDrawer
 {
-    private int GetProp(SerializedProperty property, EnumBehaviour_Scriptable manager) 
+    private int GetProp(SerializedProperty property, IEnumBehaviour manager) 
     { 
         return manager.GetId(property.objectReferenceValue); 
     }
 
-    private void SetProp<T>(SerializedProperty property, int v, EnumBehaviour_Scriptable manager, int b) where T: Object
+    private void SetProp<T>(SerializedProperty property, int v, IEnumBehaviour manager, int b) where T: Object
     {
         property.objectReferenceValue = (T)manager.GetObjectRefference(v - b);
         property.serializedObject.ApplyModifiedProperties();
     }
 
-    protected void DrawCustomDrawer<T>(SerializedProperty property, EnumBehaviour_Scriptable manager, Rect position, GUIContent label, bool includeNone = true) where T: Object
+    protected void DrawCustomDrawer<T>(SerializedProperty property, IEnumBehaviour manager, Rect position, GUIContent label, bool includeNone = true) where T: Object
     {
         int b = includeNone ? 1 : 0;
 
@@ -43,9 +43,9 @@ public class EnumBehaviour_Drawer : PropertyDrawer
         SetProp<T>(property, selectedInt, manager, b);
     }
 
-    protected bool TryDrawDefaultField(Rect position, SerializedProperty property, GUIContent label, Type forbittenType, EnumBehaviour_Scriptable manager)
+    protected bool TryDrawDefaultField(Rect position, SerializedProperty property, GUIContent label, Type forbittenType, IEnumBehaviour manager)
     {
-        bool v = !manager || base.fieldInfo.ReflectedType == forbittenType;
+        bool v = manager == null || base.fieldInfo.ReflectedType == forbittenType;
 
         bool f = v || !CustomInspectorHelper.CustomInspectors;
 

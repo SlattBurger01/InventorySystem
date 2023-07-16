@@ -10,16 +10,18 @@ namespace InventorySystem.PageContent
     [AddComponentMenu(CreateAssetMenuPaths.craftingMenu)]
     public class PageContent_CraftingMenu : InventoryPageContent
     {
-        [SerializeField] private PageContent_ItemDisplayer selectedItemDisplayer;
-
         [SerializeField] private Transform crafting_recipesParent;
         [SerializeField] private Button craftButton;
 
-        [SerializeField] private PageContent_ListContentDisplayer reqItemScrollableContent;
+        [SerializeField] private PageContent_ListContentDisplayer reqItemsDisplayer;
+
+        public PageContent_ListContentDisplayer recipesDisplayer;
+
+        [UnnecessaryProperty]
+        [SerializeField] private PageContent_ItemDisplayer selectedItemDisplayer;
 
         public CraftingRecipe[] recipes;
         private CraftingRecipe[] defaultRecipes;
-        public PageContent_ListContentDisplayer scrollableItemDisplayer;
 
         private Crafting crafting;
 
@@ -31,11 +33,15 @@ namespace InventorySystem.PageContent
         {
             if (viaButton) recipes = defaultRecipes;
 
-            crafting.DisplayRecipes(crafting_recipesParent, craftButton, recipes, this, reqItemScrollableContent);
+            crafting.DisplayRecipes(crafting_recipesParent, craftButton, recipes, this, reqItemsDisplayer);
         }
 
         public void UpdateCraftingData(CraftingRecipe[] recipes_) { recipes = recipes_; }
 
-        public void OnRecipeSelected(CraftingRecipe recipe) { selectedItemDisplayer.DisplaySelectedItem(new ItemInInventory(recipe.output)); }
+        public void OnRecipeSelected(CraftingRecipe recipe)
+        {
+            if (!selectedItemDisplayer) return;
+            selectedItemDisplayer.DisplaySelectedItem(new ItemInInventory(recipe.output));
+        }
     }
 }

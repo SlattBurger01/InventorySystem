@@ -11,7 +11,11 @@ namespace InventorySystem.PhotonPun
 
         private PhotonView view;
 
-        private void Awake() { bm = GetComponent<BuilderManager>(); view = GetComponent<PhotonView>(); }
+        private void Awake() 
+        { 
+            bm = GetComponent<BuilderManager>(); 
+            view = GetComponent<PhotonView>(); 
+        }
 
         private void Start()
         {

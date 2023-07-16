@@ -18,5 +18,9 @@ namespace InventorySystem
             loadingScreens[loadingScreen].SetActive(enable); 
             Console.Add($"Set active screen: {loadingScreen}, {enable}", FindObjectOfType<Console>()); 
         }
+
+        public void EnableInializeGameLoadingScreen(bool enable) => EnableLoadingScreen(0, enable);
+        public void EnableLoadGameLoadingScreen(bool enable) => EnableLoadingScreen(1, enable);
+        public void EnableSyncGameLoadingScreen(bool enable) => EnableLoadingScreen(2, enable);
     }
 }

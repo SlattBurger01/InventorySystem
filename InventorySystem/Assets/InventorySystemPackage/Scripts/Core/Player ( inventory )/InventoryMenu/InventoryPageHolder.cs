@@ -1,7 +1,4 @@
 using InventorySystem.PageContent;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 
 [System.Serializable]
@@ -11,6 +8,27 @@ public class InventoryPageHolder
 
     public InventoryPage page;
     public bool menuAcessible = true; // Determines if button will be spawned for this page
-    public KeyCode openKey; // YOU CAN ALSO CLOSE THIS PAGE WITH THIS KEY, EVERY PAGE HAS TO HAVE UNIQUE KEY OR 'KeyCode.None' !
-    public KeyCode closeKey; // YOU CAN CLOSE WITH 'openKey', BUT CAN'T OPEN WITH 'closeKeys'
+
+    [Tooltip("Holding this key will open inventory page, releasing will close it, every page has to have unique key or 'KeyCode.None', don' use same key ase OpenKey")]
+    public KeyCode holdToShowKey;
+
+    [Tooltip("You can also close this page with this key, every page has to have unique key or 'KeyCode.None'")]
+    public KeyCode openKey;
+
+    [Tooltip("Closing only")]
+    public KeyCode closeKey;
+
+    public KeyCode GetKey(PageKeyType t)
+    {
+        switch (t)
+        {
+            case PageKeyType.open: return openKey;
+            case PageKeyType.close: return closeKey;
+            case PageKeyType.hold: return holdToShowKey;
+        }
+
+        throw new System.Exception("Page key type is not implemented");
+    }
 }
+
+public enum PageKeyType { open, close, hold }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using InventorySystem.PageContent;
-using InventorySystem;
 
 [CustomEditor(typeof(InventoryMenu))]
 public class InventoryMenuCustomInspector : Editor
@@ -17,8 +16,6 @@ public class InventoryMenuCustomInspector : Editor
         InventoryMenu menu = target as InventoryMenu;
 
         if (!menu) return;
-
-        EditorGUILayout.Space(20);
 
         if (AllPagesAreSame(menu)) return;
 

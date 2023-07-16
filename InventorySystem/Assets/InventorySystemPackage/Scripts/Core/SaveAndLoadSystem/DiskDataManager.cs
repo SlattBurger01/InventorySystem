@@ -13,18 +13,21 @@ namespace InventorySystem.SaveAndLoadSystem_
         private static readonly string totalFileName = "TotalGameSave";
         private static readonly string gameDataFileName = "totalGameData";
 
+        /// <summary> Saves GameSave on local disk </summary>
         public static void SaveDataOntoDisk(string saveName, GameSave save, string currentGameName)
         {
             string path = Application.persistentDataPath + $"/{currentGameName}/{saveName}.{fileType}";
             SaveDataOntoDiskF(path, save);
         }
 
+        /// <returns> Loaded GameSave from disk </returns>
         public static GameSave LoadSaveFromDisk(string saveName, string currentGameName)
         {
             string path = Application.persistentDataPath + $"/{currentGameName}/{saveName}.{fileType}";
-            return LoadDataFromDiskF(path) as GameSave;
+            return LoadDataFromDiskF<GameSave>(path);
         }
 
+        /// <summary> Creates and saves TotalGameSave on local disk </summary>
         public static void SaveTotalGameDataOntoDisk(List<string> savesNames, string currentGameName)
         {
             string path = Application.persistentDataPath + $"/{currentGameName}/{totalFileName}.{fileType}";
@@ -35,7 +38,7 @@ namespace InventorySystem.SaveAndLoadSystem_
         public static TotalGameSave LoadTotalGameSaveDataFromDisk(string GameName)
         {
             string path = Application.persistentDataPath + $"/{GameName}/{totalFileName}.{fileType}";
-            return LoadDataFromDiskF(path) as TotalGameSave;
+            return LoadDataFromDiskF<TotalGameSave>(path);
         }
 
         // NOT USED IN GAME, BUT IN MENU ( ON CREATING NEW GAME )
@@ -46,13 +49,15 @@ namespace InventorySystem.SaveAndLoadSystem_
             SaveDataOntoDiskF(path, save);
         }
 
+        /// <returns> Gamedata on disk (if found, otherwise null) </returns>
         public static GameData LoadGameDataFromDisk()
         {
             string path = Application.persistentDataPath + $"/{gameDataFileName}.{totalGameDataFileType}";
-            return LoadDataFromDiskF(path) as GameData;
+            return LoadDataFromDiskF<GameData>(path);
         }
 
-        private static object LoadDataFromDiskF(string path)
+        /// <returns> Deserialized data on 'path' </returns>
+        private static T LoadDataFromDiskF<T>(string path)
         {
             if (File.Exists(path))
             {
@@ -62,11 +67,11 @@ namespace InventorySystem.SaveAndLoadSystem_
                 object data = formatter.Deserialize(stream);
                 stream.Close();
 
-                return data;
+                return (T)data;
             }
 
             Debug.LogWarning($"File was not found! {path}");
-            return null;
+            return default(T);
         }
 
         private static void SaveDataOntoDiskF(string path, object data)

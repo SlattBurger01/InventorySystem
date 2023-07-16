@@ -86,7 +86,7 @@ namespace InventorySystem.PhotonPun
             Console.Add($"ROOM {roomName} JOINED SUCESSFULLY", FindObjectOfType<Console>(), ConsoleCategory.Multiplayer);
 
             LoadingScreensHandler loadingScreensHandler = FindObjectOfType<LoadingScreensHandler>();
-            loadingScreensHandler.EnableLoadingScreen(0, false);
+            if(loadingScreensHandler) loadingScreensHandler.EnableInializeGameLoadingScreen(false);
 
             FindObjectOfType<PhotonInventoryGameManager>().OnRoomJoined(!offline);
         }

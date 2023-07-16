@@ -12,4 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8cd21515a2a89a641a8f4737d7cff759, type: 3}
   m_Name: EquipPositionsHandler
   m_EditorClassIdentifier: 
-  equipPositions: []
+  equipPositions:
+  - {fileID: 11400000, guid: fa230d4cedf2dca41a324bba8840d63a, type: 2}
+  - {fileID: 11400000, guid: 0cdc4f0e57bdb074985d83e0efe5e806, type: 2}
+  - {fileID: 11400000, guid: 5fdd5cd7c96a93c4882b749abd6b8b8a, type: 2}

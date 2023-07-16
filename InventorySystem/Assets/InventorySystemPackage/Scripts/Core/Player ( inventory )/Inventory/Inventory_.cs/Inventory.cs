@@ -917,6 +917,8 @@ namespace InventorySystem.Inventory_
 
         public static void DestroyEveryChildOfTransform(Transform transform, int startPos = 0)
         {
+            if (!transform) Debug.LogError("Transform does not exists");
+
             for (int i = startPos; i < transform.childCount; i++) Destroy(transform.GetChild(i).gameObject);
         }
 

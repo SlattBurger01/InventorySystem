@@ -11,10 +11,13 @@ namespace InventorySystem.Inventory_
         [HideInNormalInspector] public int id; // IS ASSIGNED AUTOMATICALLY
         [HideInNormalInspector] public GameObject itemInSlot; // ASSIGNED AUTOMATICALLY, SPAWNED OBJECT
 
-        public EquipPosition equipPosition;
-
         [Tooltip("If itemParent is null, this objects transform will be used (if object contains any childs: item parent is necessary)")]
         [SerializeField] private Transform itemParent; // ITEMS PREFAB WILL BE SPAWNED THERE
+
+        [Header("SETTINGS")]
+        [Tooltip("Every slot has to have unique equip position (if equip position is not none) ")]
+        public EquipPosition equipPosition;
+
         public Transform ItemParent_ { get { return itemParent ? itemParent : transform; } set { itemParent = value; } }
 
         [Tooltip("Fast transfer value is based on this value (higher value = higher priority), overwritable by parent slot content displayer")]
@@ -49,7 +52,7 @@ namespace InventorySystem.Inventory_
         /// <returns> if 'position' is suitable for this slot </returns>
         public bool CanBeEquiped(EquipPosition position) => MoveItemsInInventoryHandler.EquipPostionIsNoneOrSame(equipPosition, position);
 
-        /// <summary> Player interacted with this slot (slot has to be in hotbar) -- item interaction has been already done</summary>
+        /// <summary> Player interacted with this slot (slot has to be in hotbar) -- item interaction has been already done </summary>
         public virtual void OnHotbarInteract() { }
     }
 }

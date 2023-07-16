@@ -17,8 +17,6 @@ namespace InventorySystem
         public static TotalGameSave gameSaveToLoad = null;
         // -----
 
-        //[SerializeField] private ItemsDatabase itemsDatabase;
-
         [Tooltip("Object that will be enabled on localPlayer's dead")]
         [SerializeField] private GameObject playerRespawnMenu;
 
@@ -34,9 +32,8 @@ namespace InventorySystem
 
         [HideInNormalInspector] public InventoryCore localPlayer;
 
-        public static Action updateIsMasterclientBool = delegate { }; // REMOVE THIS WITH ACTION ! (CREATE VARIABLE IS MASTERCLIENT AND UPDATE IT BEFORE USE)
+        public static Action updateIsMasterclientBool = delegate { };
         public static bool m_isMasterClient = true;
-
         public static bool IsMasterClient { get { updateIsMasterclientBool.Invoke(); return m_isMasterClient; } }
 
         private void Awake()
@@ -117,14 +114,16 @@ namespace InventorySystem
 
         public static Action<PickupableItem, int> setItemCount = delegate { }; // ITEM TYPE, COUNT
 
+        /// <summary> Synchronizes item count with all players </summary>
         public static void SetItemCount(PickupableItem item, int dropCount)
         {
-            if (InventoryGameManager.multiplayerMode) setItemCount.Invoke(item, dropCount);
+            if (multiplayerMode) setItemCount.Invoke(item, dropCount);
             else item.itemCount = dropCount;
         }
 
         public static Action<PickupableItem, float> setDurabilityToPItem = delegate { }; // ITEM, DURABILITY
 
+        /// <summary> Synchronizes durability with all players </summary>
         public static void SetDurabilityToPItem(PickupableItem pItem, float itemDurability)
         {
             if (multiplayerMode) setDurabilityToPItem.Invoke(pItem, itemDurability);
@@ -192,7 +191,6 @@ namespace InventorySystem
         }
 
         public static Action<Vector3> spawnPlayer_ = delegate { };
-
         public static Action<InventoryCore> onPlayerSpawned = delegate { };
 
         public static GameObject SpawnPlayer(Vector3 position)
@@ -203,15 +201,28 @@ namespace InventorySystem
         }
 
         // --- PLAYER RESPAWNING
-        public void TryOpenPlayerRespawnMenu(bool open) { if (!playerRespawnMenu) return; OpenPlayerRespawnMenu(open); }
+        /// <summary> Changes respawn menu state based on 'open' bool (if exists) </summary>
+        public void TryOpenPlayerRespawnMenu(bool open) 
+        { 
+            if (!playerRespawnMenu) return; 
+            OpenPlayerRespawnMenu(open);
+        }
 
-        private void OpenPlayerRespawnMenu(bool open) { playerRespawnMenu.SetActive(open); Cursor.lockState = open ? CursorLockMode.None : CursorLockMode.Locked; }
+        /// <summary> Sets menu active state and cursor lock state (based on 'open') </summary>
+        private void OpenPlayerRespawnMenu(bool open) 
+        { 
+            playerRespawnMenu.SetActive(open); 
+            Cursor.lockState = open ? CursorLockMode.None : CursorLockMode.Locked; 
+        }
 
-        public void RespawnPlayer()
+        /// <summary> Spawns player on 'position' </summary>
+        public void RespawnPlayer(Vector3 position)
         {
-            SpawnPlayer(defaultPlayerSpawnPos);
+            SpawnPlayer(position);
             OpenPlayerRespawnMenu(false);
         }
+
+        public void RespawnPlayerOnDefaultSpawnPos() => RespawnPlayer(defaultPlayerSpawnPos);
 
         public static readonly Vector3 defaultPlayerSpawnPos = new Vector3(0, 10, 0);
     }

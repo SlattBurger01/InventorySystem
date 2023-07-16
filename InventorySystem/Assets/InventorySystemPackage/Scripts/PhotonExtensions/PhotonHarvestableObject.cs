@@ -12,10 +12,11 @@ namespace InventorySystem.PhotonPun
         private PhotonView view;
         private HarvestableObject harvestableObject;
 
-        private void Awake() { view = GetComponent<PhotonView>(); harvestableObject = GetComponent<HarvestableObject>(); }
+        private void Awake() 
+        { 
+            view = GetComponent<PhotonView>(); 
+            harvestableObject = GetComponent<HarvestableObject>();
 
-        private void Start()
-        {
             harvestableObject.PhotonHarvObj_Harvest += HarvestableObject_Harvest;
         }
 

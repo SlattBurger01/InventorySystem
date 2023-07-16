@@ -7,7 +7,6 @@ using InventorySystem.Items;
 
 /// <summary></summary>
 /// <typeparam name="T"> Type of items target enum behaviour holds </typeparam>
-[CustomEditor(typeof(EnumBehaviour_Scriptable))]
 public class EnumBehaviourHandlerCustomInspector<T> : Editor where T: ScriptableObject
 {
     protected void DrawInspector(ref T[] items, string buttonName)
@@ -19,6 +18,7 @@ public class EnumBehaviourHandlerCustomInspector<T> : Editor where T: Scriptable
         if (GUILayout.Button(buttonName))
         {
             items = GetItems();
+            EditorUtility.SetDirty(target);
         }
     }
 

@@ -11,20 +11,29 @@ namespace InventorySystem.PhotonPun
     public class PhotonStorage : MonoBehaviour
     {
         private Storage storage;
+        private PhotonView view;
 
-        private void Awake() { storage = GetComponent<Storage>(); storage.SyncItemRpc += SyncItem; }
+        private void Awake() 
+        { 
+            storage = GetComponent<Storage>();
+            view = GetComponent<PhotonView>();
+
+            storage.SyncItemRpc += SyncItem; 
+        }
 
         private void SyncItem(int itemPosition, int itemId, int itemCount, float itemDurability)
         {
-            GetComponent<PhotonView>().RPC("SyncItemRPC", RpcTarget.All, itemPosition, itemId, itemCount, itemDurability, PhotonInventoryGameManager.GetMinePlayersViewId());
+            view.RPC("SyncItemRPC", RpcTarget.Others, itemPosition, itemId, itemCount, itemDurability);
         }
 
         [PunRPC]
-        private void SyncItemRPC(int itemPosition, int itemId, int itemCount, float itemDurability, int callerPlayerId)
+        private void SyncItemRPC(int itemPosition, int itemId, int itemCount, float itemDurability)
         {
+            print("Sync item received");
+
             storage.SyncItemFinal(itemPosition, itemId, itemCount, itemDurability);
 
-            if (!PhotonInventoryGameManager.IsMine(callerPlayerId)) storage.onStorageItemsChanged.Invoke(storage); // IT IS SUPPOST TO BE DISPLAYED FOR EVERYONE EXEPT YOU
+            storage.onStorageItemsChanged.Invoke(storage); // IT IS SUPPOST TO BE DISPLAYED FOR EVERYONE EXEPT YOU
         }
     }
 }

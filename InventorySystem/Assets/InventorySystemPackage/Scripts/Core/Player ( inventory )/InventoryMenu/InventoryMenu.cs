@@ -6,18 +6,18 @@ using InventorySystem.Inventory_;
 using System;
 using InventorySystem.EscMenu;
 using System.Collections.Generic;
-using UnityEditor;
 
 namespace InventorySystem.PageContent
 {
     public class InventoryMenu : MonoBehaviour
     {
-        [SerializeField] private GameObject Inventory; // OBJECT THAT IS GOING TO BE ENABLED ON INVENTORY OPEN
+        [SerializeField] private GameObject inventory; // OBJECT THAT IS GOING TO BE ENABLED ON INVENTORY OPEN
         [SerializeField] private ListContentDisplayer buttonsDisplayer;
 
         [Header("KEY BINDING")]
         [SerializeField] private KeyCode openKey = KeyCode.E;
 
+        [HideInNormalInspector]
         public bool opened;
 
         private InventoryCore core;
@@ -36,6 +36,7 @@ namespace InventorySystem.PageContent
         public Action onMenuOpened = delegate { };
         public Action onMenuClosed = delegate { };
 
+        /// <summary> Disables not only opening, but any menu state switching </summary>
         private bool openingLocked;
 
         private bool updateOpenedPage; // WILL BE UPDATED IN LATE UPDATE ( PERFORMANCE REASON )
@@ -64,15 +65,23 @@ namespace InventorySystem.PageContent
         private void Update()
         {
             if (!core.isMine) return;
-            if (Input.GetKeyDown(openKey) && !openingLocked) SwitchOpenState(true);
-            if (!openingLocked && opened && AnyPageKeyIsOpened(false) != -1) CloseMenu();
 
-            TryOpenMenuViaCustomInput();
+            if (!openingLocked)
+            {
+                if (Input.GetKeyDown(openKey)) SwitchOpenState(true);
+                if (opened && AnyPageKeyIsDown(PageKeyType.close) != -1) CloseMenu();
+
+                TryOpenMenuViaCustomInput();
+            }
         }
 
+        private int holdPage = -1;
+
+        /// <summary> tries to open/close page using it's custom open, close and hold keys </summary>
         private void TryOpenMenuViaCustomInput()
         {
-            int openMenu = AnyPageKeyIsOpened(true);
+            // ---- PRESS OPEN HANDLING ----
+            int openMenu = AnyPageKeyIsDown(PageKeyType.open);
 
             if (openMenu != -1)
             {
@@ -83,15 +92,31 @@ namespace InventorySystem.PageContent
                     else CloseMenu();
                 }
             }
+
+            // ---- HOLD OPEN HANDLING ----
+            openMenu = AnyPageKeyIsPressed(PageKeyType.hold);
+
+            if (openMenu != -1)
+            {
+                if (!opened) OpenMenuAndInventoryPage(openMenu, true, -1, null, true);
+            }
+            else if (holdPage != -1)
+            {
+                CloseMenu();
+                holdPage = -1;
+            }
         }
 
+        /// <summary> Disables/enables menu opening and closing </summary>
         public void LockMenuOpening(bool lock_) { openingLocked = lock_; }
 
+        /// <summary> Opens if closed, closes if opened </summary>
         private void SwitchOpenState(bool viaButton, int uninteractableMenuButton = -1, Storage storage = null) // "uninteractableMenuButton": "-1" MEANS NONE
         {
             OpenRecentPage(!opened, viaButton, uninteractableMenuButton, storage);
         }
 
+        /// <summary> closes menu </summary>
         public void CloseMenu() => OpenBase(false);
 
         public void OpenRecentPage(bool open, bool viaButton, int uninteractableMenuButton = -1, Storage storage = null)
@@ -99,17 +124,18 @@ namespace InventorySystem.PageContent
             OpenF(open, viaButton, recentlyOpenedPage, uninteractableMenuButton, storage);
         }
 
-        private void OpenF(bool open, bool viaButton, int menuId, int uninteractableMenuButton = -1, Storage storage = null)
+        private void OpenF(bool open, bool viaButton, int menuId, int uninteractableMenuButton = -1, Storage storage = null, bool hold = false)
         {
             OpenBase(open, storage);
 
             if (opened)
             {
-                OpenInventoryPage(menuId, viaButton, uninteractableMenuButton != -1); // 4 STANDS FOR CHEST MENU ( NOT FINAL )
+                OpenInventoryPage(menuId, viaButton, uninteractableMenuButton != -1, hold); // 4 STANDS FOR CHEST MENU ( NOT FINAL )
                 SpawnButtons(!storage, uninteractableMenuButton);
             }
         }
 
+        /// <summary> Sets 'inventory' active and invokes related actions </summary>
         private void OpenBase(bool open, Storage storage = null)
         {
             opened = open;
@@ -120,7 +146,7 @@ namespace InventorySystem.PageContent
             if (opened) onMenuOpened.Invoke();
             else onMenuClosed.Invoke();
 
-            Inventory.SetActive(opened);
+            inventory.SetActive(opened);
 
             //core.inventoryEventSystem.Inventory_OnInventoryMenuOpened(opened, storage); // THIS HAS TO BE UPDATED BEFORE MENU CONTENT ( storage in inventory pages is acessed from inventory )
         }
@@ -129,17 +155,18 @@ namespace InventorySystem.PageContent
         private int recentlyOpenedPage = 0; // ON FIRST OPEN: FIRST PAGE IN ARRAY WILL BE OPENED
         private int currentlyOpenedPageId; // IS NOT RESETED ON CLOSE !
 
-        /// <summary> WILL FORCE OPEN </summary>
-        private void OpenMenuAndInventoryPage(int menuId, bool openedViaButton, int uninteractableMenuButton = -1, Storage storage = null)
+        /// <summary> forcefully opens menu and target page </summary>
+        private void OpenMenuAndInventoryPage(int menuId, bool openedViaButton, int uninteractableMenuButton = -1, Storage storage = null, bool hold = false)
         {
-            OpenF(true, openedViaButton, menuId, uninteractableMenuButton, storage);
+            OpenF(true, openedViaButton, menuId, uninteractableMenuButton, storage, hold);
         }
 
-        private void OpenInventoryPage(int id, bool openedViaButton, bool respawnButtons)
+        private void OpenInventoryPage(int id, bool openedViaButton, bool respawnButtons, bool hold = false)
         {
             if (respawnButtons) SpawnButtons(true, -1);
 
-            currentlyOpenedPageId = id;
+            if (hold) holdPage = id;
+            else currentlyOpenedPageId = id;
 
             for (int i = 0; i < pages_.Length; i++)
             {
@@ -148,8 +175,6 @@ namespace InventorySystem.PageContent
             }
 
             if (MenuIsAcessible(id)) recentlyOpenedPage = id;
-
-            //core.inventoryEventSystem.Inventory_OnInventoryPageOpened(pages[currentlyOpenedPageId]);
 
             onInventoryPageOpened.Invoke(CurrentlyOpenedPage);
         }
@@ -224,27 +249,38 @@ namespace InventorySystem.PageContent
 
         public void OpenMenuUsingActionBuilding(int targetMenuId) => OpenMenuAndInventoryPage(targetMenuId, false);
 
-        // -- STORAGE
+        /// <summary> Opens storgae using action building </summary>
         public void ActionBuilding_OpenStorage(int targetMenuId, Storage storage, InteractionType interactionType)
         {
             openedStorageInterType = interactionType;
-
             OpenMenuAndInventoryPage(targetMenuId, false, targetMenuId, storage);
         }
 
         [HideInNormalInspector] public InteractionType openedStorageInterType;
 
-        
-        private int AnyPageKeyIsOpened(bool openKeys)
+        /// <returns> id of the first page its key (of 'type') is being pressed down </returns>
+        private int AnyPageKeyIsDown(PageKeyType type) => AnyPageKeyIsUsed(type, true);
+
+        /// <returns> id of the first page its key (of 'type') is pressed down </returns>
+        private int AnyPageKeyIsPressed(PageKeyType type) => AnyPageKeyIsUsed(type, false);
+
+        /// <returns> id of the first page its key (of 'type') !keyDown! ? is being pressed down : is pressed down </returns>
+        private int AnyPageKeyIsUsed(PageKeyType type, bool keyDown)
         {
             for (int i = 0; i < pages_.Length; i++)
             {
-                KeyCode key = openKeys ? pages_[i].openKey : pages_[i].closeKey;
+                KeyCode key = pages_[i].GetKey(type);
 
-                if (Input.GetKeyDown(key)) return i;
+                if (GetKeyUse(keyDown, key)) return i;
             }
 
             return -1;
+        }
+
+        /// <returns> if 'key' is being used based on 'down' bool </returns>
+        private bool GetKeyUse(bool down, KeyCode key)
+        {
+            return down ? Input.GetKeyDown(key) : Input.GetKey(key);
         }
     }
 }

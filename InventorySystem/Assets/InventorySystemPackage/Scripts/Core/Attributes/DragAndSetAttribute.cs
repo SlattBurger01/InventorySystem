@@ -1,7 +1,7 @@
 using UnityEditor;
 using UnityEngine;
 
-/// <summary> creates droppable field out of assigned property and  </summary>
+/// <summary> creates droppable field out of assigned property </summary>
 public class DragAndSetAttribute : PropertyAttribute
 {
 #if UNITY_EDITOR

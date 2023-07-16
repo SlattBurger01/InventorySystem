@@ -5,17 +5,19 @@ using UnityEngine;
 namespace InventorySystem
 {
     [CreateAssetMenu(menuName = CreateAssetMenuPaths.categoriesHandler)]
-    public class CategoriesHandler : EnumBehaviour_Scriptable
+    public class CategoriesHandler : ScriptableObject, IEnumBehaviour
     {
+        private IEnumBehaviour Eb => this;
+
         public ItemCategory[] categories;
 
-        public override int GetLenght() => categories.Length;
+        public int GetLenght() => categories.Length;
 
         /// <returns> ID OF 'category' BASED ON 'categories'</returns>
-        public override int GetId(object o) => base.GetId<ItemCategory>((ItemCategory)o, categories);
+        public int GetId(object o) => Eb.GetId<ItemCategory>((ItemCategory)o, categories);
 
-        public override Object GetObjectRefference(int i) => base.GetObjectRefference<ItemCategory>(i, categories);
+        public Object GetObjectRefference(int i) => Eb.GetObjectRefference<ItemCategory>(i, categories);
 
-        public override string GetDisplayNameOfId(int id) { return categories[id].name; }
+        public string GetDisplayNameOfId(int id) { return categories[id].name; }
     }
 }

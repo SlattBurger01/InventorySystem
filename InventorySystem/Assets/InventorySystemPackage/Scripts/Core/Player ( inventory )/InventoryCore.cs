@@ -20,8 +20,7 @@ namespace InventorySystem
         public Action GetOwnershipStatus = delegate { };
 
         // DEBUG
-        [Header("Debug")]
-        [SerializeField][HideInSinglePlayerInspector] private bool forceNotMine = false;
+        [SerializeField] [HideInSinglePlayerInspector] private bool forceNotMine = false;
         [HideInInspector] public InventoryEventSystem inventoryEventSystem;
 
         private void Awake() { inventoryEventSystem = gameObject.AddComponent<InventoryEventSystem>();}

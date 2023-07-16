@@ -16,7 +16,6 @@ public class DragAndSetAttributeDrawer : PropertyDrawer
 
         switch (evt.type)
         {
-            //case EventType.DragUpdated:
             case EventType.DragPerform:
                 if (!position.Contains(evt.mousePosition)) return;
 
@@ -25,12 +24,7 @@ public class DragAndSetAttributeDrawer : PropertyDrawer
                 if (evt.type == EventType.DragPerform)
                 {
                     DragAndDrop.AcceptDrag();
-
                     DragAndSetAttribute.OnDragCompleted(property, DragAndDrop.objectReferences);
-
-                    /*Object obj = property.serializedObject.targetObject;
-
-                    if (obj is ListContentDisplayer) (obj as ListContentDisplayer).OnDragAndSet(property.name, DragAndDrop.objectReferences);*/
                 }
                 break;
         }

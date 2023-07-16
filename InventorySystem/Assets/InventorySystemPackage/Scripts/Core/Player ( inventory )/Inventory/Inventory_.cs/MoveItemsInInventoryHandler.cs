@@ -539,6 +539,9 @@ namespace InventorySystem.Inventory_
         private void TryEquipItem(Slot slot, ItemInInventory item)
         {
             if (EquipPosition.IsNone(slot.equipPosition)) return;
+
+            print($"Try equip item ({slot} - {slot.equipPosition})");
+
             inventory.OnItemEquiped(slot.equipPosition, item);
         }
 
