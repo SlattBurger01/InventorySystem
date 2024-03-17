@@ -48,7 +48,7 @@ namespace InventorySystem.Editor_
 
         private static string[] GetPhotonExtentionPaths()
         {
-            string[] paths = Directory.GetFiles($"{Application.dataPath}/InventorySystemPackage/Scripts/PhotonExtensions");
+            string[] paths = Directory.GetFiles($"{Application.dataPath}/InventorySystemPackage/Scripts/MultiplayerExtensions/PhotonExtensions");
 
             for (int i = 0; i < paths.Length; i++)
             {

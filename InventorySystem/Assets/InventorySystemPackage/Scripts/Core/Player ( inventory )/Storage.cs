@@ -89,8 +89,12 @@ namespace InventorySystem
 
             float durability = items_[itemToSync] != null ? items_[itemToSync].durability : 0;
 
+            print($"Sync {itemToSync}, {item}, {itemsCount_[itemToSync]}, {durability}");
+
+            // this only synces for others
             if (InventoryGameManager.multiplayerMode) SyncItemRpc.Invoke(itemToSync, item, itemsCount_[itemToSync], durability);
-            else SyncItemFinal(itemToSync, item, itemsCount_[itemToSync], durability);
+
+            SyncItemFinal(itemToSync, item, itemsCount_[itemToSync], durability);
         }
 
         public Action<int, int, int, float> SyncItemRpc = delegate { }; //itemPosition, itemId, itemCount, itemDurability

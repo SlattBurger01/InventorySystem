@@ -5,7 +5,10 @@ using UnityEngine;
 using UnityEngine.UI;
 using System;
 
-/// <summary> Does not works on its own (Has to be setted up and moved externaly (exept arrows onClick)) </summary>
+/// The main function is 'SetDisplayedContent_()' which does basically everything you need for you
+/// Objects parent is not being changed for displaying content, only changes their local position, you can use 'contentParent' as its parent
+
+/// <summary> Does not works on its own (Has to be setted up and moved externaly - call 'SetUp()' function (exept arrows onClick)) </summary>
 public class ListContentDisplayer : MonoBehaviour
 {
     public bool interactOnScrollwheel = true; // DETERMINES IF THIS DISPLAYER IS INTERACTED WITH ON MOUSE SCROLLED
@@ -13,6 +16,7 @@ public class ListContentDisplayer : MonoBehaviour
     [SerializeField] private bool xAxis; // DISPLAYS HORIZONTALLY : DISPLAYS VERTICALLY
     [SerializeField] private bool increaseAxisPosition = true; // FROM BOTTOM TO TOP : FROM TOP TO BOTTOM
 
+    [UnnecessaryProperty]
     public Transform contentParent;
 
     [Header("SCROLLING SETTINGS")]
@@ -39,7 +43,7 @@ public class ListContentDisplayer : MonoBehaviour
     [SerializeField] private float spacing = 120;
 
     [Tooltip("0 = right, 1 = left")]
-    //[SerializeField] private Button[] arrows;
+    [UnnecessaryProperty(0)]
     [SerializeField] private ArrowsHolder arrows;
 
     [Header("LINES SETTINGS")]
@@ -342,17 +346,17 @@ public class ListContentDisplayer : MonoBehaviour
 
 #if UNITY_EDITOR // DRAG AND SET
 
-    /// <returns> !if value of name is not found: will return 0! </returns>
-    public float OnDragAndSet(string name, UnityEngine.Object[] objs)
+    public void OnDragAndSet(string name, UnityEngine.Object[] objs)
     {
-        if (objs.Length == 0) return 0;
+        if (objs.Length == 0) return;
 
         switch (name)
         {
             case nameof(topItemLocalposition):
                 Transform tr = (objs[0] as GameObject).transform;
 
-                return xAxis ? tr.localPosition.x : tr.localPosition.y;
+                topItemLocalposition = xAxis ? tr.localPosition.x : tr.localPosition.y;
+                break;
 
             case nameof(spacing):
                 if (objs.Length < 2) break;
@@ -360,10 +364,10 @@ public class ListContentDisplayer : MonoBehaviour
                 Transform tr1 = (objs[0] as GameObject).transform;
                 Transform tr2 = (objs[1] as GameObject).transform;
 
-                return xAxis ? Distance(tr1.localPosition.x, tr2.localPosition.x) : Distance(tr1.localPosition.y, tr2.localPosition.y);
+                spacing = xAxis ? Distance(tr1.localPosition.x, tr2.localPosition.x) : Distance(tr1.localPosition.y, tr2.localPosition.y);
+                break;
         }
 
-        return 0;
     }
 
     private static float Distance( float f1, float f2)
@@ -375,5 +379,6 @@ public class ListContentDisplayer : MonoBehaviour
 
         return Math.Abs(Math.Abs(f1) - Math.Abs(f2));
     }
+
 #endif
 }

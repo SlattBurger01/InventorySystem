@@ -2,6 +2,7 @@ using UnityEngine;
 
 /// <summary> 
 /// <br> Does NOT works for collections, </br>
+/// <br> Does NOT works for System.Serializable classes without custom editor, </br>
 /// <br> Used for properties (mostly refferences) that are just optional for correct functionality of the script - it adds functionality, </br>
 /// <br> Works with 'Header attribute', </br>
 /// <br> CustomEditor has to be enabled </br>

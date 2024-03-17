@@ -11,10 +11,8 @@ public class DragAndSetAttribute : PropertyAttribute
 
         if (obj is ListContentDisplayer)
         {
-            property.floatValue = (obj as ListContentDisplayer).OnDragAndSet(property.name, draggedObjects);
+            (obj as ListContentDisplayer).OnDragAndSet(property.name, draggedObjects);
         }
-
-        property.serializedObject.ApplyModifiedProperties();
     }
 #endif
 }

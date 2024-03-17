@@ -1,6 +1,7 @@
 using InventorySystem.Interactions;
 using InventorySystem.Inventory_;
 using UnityEngine;
+using static UnityEditor.Progress;
 
 namespace InventorySystem.Items
 {
@@ -13,7 +14,18 @@ namespace InventorySystem.Items
         [Tooltip("-1 MEANS FULL")]
         public float itemDurability = -1;
 
-        // IInteractable INTERFACE
+        public void SetValues(int count, float durab)
+        {
+            itemCount = count;
+            itemDurability = durab;
+        }
+
+        public bool HasFullDurability
+        {
+            get { return itemDurability == -1 || itemDurability == item_item.maxDurability; }
+        }
+
+        // ----- IInteractable INTERFACE -----
         void IInteractable.Interact(Inventory inventory)
         {
             ItemInInventory itemToAdd = itemDurability != -1 ? new ItemInInventory(item_item, itemDurability) : new ItemInInventory(item_item);

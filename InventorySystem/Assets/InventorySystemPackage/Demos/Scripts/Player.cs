@@ -176,8 +176,7 @@ namespace InventorySystem
 
             onDead.Invoke();
 
-            FindObjectOfType<InventoryGameManager>().TryOpenPlayerRespawnMenu(true);
-            InventoryGameManager.DestroyObjectForAll(gameObject);
+            FindObjectOfType<InventoryGameManager>().OnPlayerDead();
         }
 
         //private Slider hpSupportSlider;

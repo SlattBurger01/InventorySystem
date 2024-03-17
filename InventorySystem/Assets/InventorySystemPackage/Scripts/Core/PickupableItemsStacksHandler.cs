@@ -31,9 +31,11 @@ namespace InventorySystem
 
         public void StartLoop()
         {
-            //InventoryGameManager.updateIsMasterclientBool.Invoke();
             if (!InventoryGameManager.IsMasterClient) return;
 
+            print("Starting loop");
+
+            if (stackItemCoroutine != null) return;
             stackItemCoroutine = StartCoroutine(StackItemsLoop());
         }
 
@@ -78,6 +80,7 @@ namespace InventorySystem
             if (!anyItemStacked) lowPriorityLoop = true;
         }
 
+
         private List<PickupableItem> GetItemsToStack(PickupableItem currentLoopItem)
         {
             Collider[] colliders = Physics.OverlapSphere(currentLoopItem.transform.position, maxStackDistance);
@@ -90,7 +93,7 @@ namespace InventorySystem
 
                 if (pItem == currentLoopItem) continue;
 
-                TryAddItem(currentLoopItem, pItem, ref itemsToStack, out bool continueLoop);
+                bool continueLoop = TryAddItem(currentLoopItem, pItem, ref itemsToStack);
 
                 if (!continueLoop) break;
             }
@@ -98,18 +101,12 @@ namespace InventorySystem
             return itemsToStack;
         }
 
-        /// <param name="itemsToStack"> ALL ITEMS THAT ARE GOING TO BE STACKED WITH THIS 'currentLoopItem'</param>
-        private void TryAddItem(PickupableItem currentLoopItem, PickupableItem pItem, ref List<PickupableItem> itemsToStack, out bool _continue)
+        /// <param name="itemsToStack"> ALL ITEMS THAT ARE GOING TO BE STACKED WITH THIS 'currentLoopItem' </param>
+        private bool TryAddItem(PickupableItem currentLoopItem, PickupableItem pItem, ref List<PickupableItem> itemsToStack)
         {
-            _continue = true;
+            if (!ItemsCanBeStacked(currentLoopItem, pItem, itemsToStack)) return true;
 
-            if (!pItem || itemsToStack.Contains(pItem)) return;
-            if (currentLoopItem.item_item != pItem.item_item) return; // IF PICKUPABLE ITEM HOLDS DIFFERENT ITEM THAN TARGET ITEM
-
-            bool b1 = ItemHasFullDurability(pItem);
-            bool b2 = ItemHasFullDurability(currentLoopItem);
-
-            if (b1 && b2)
+            if (pItem.HasFullDurability && currentLoopItem.HasFullDurability)
             {
                 int itemsStackCount = pItem.itemCount; // REPRESENTS TEORETICAL CURRENT ITEM COUNT
 
@@ -119,23 +116,20 @@ namespace InventorySystem
                 }
 
                 if (itemsStackCount <= currentLoopItem.item_item.maxStackCountInPickupableItem) itemsToStack.Add(pItem);
-                else _continue = false;
+                else return false;
             }
 
-            return;
+            return true;
         }
 
-        private bool ItemHasFullDurability(PickupableItem pItem)
+        private bool ItemsCanBeStacked(PickupableItem item1, PickupableItem item2, List<PickupableItem> itemsToStack)
         {
-            bool b1 = pItem.itemDurability == -1;
-            if (!b1) b1 = pItem.itemDurability == pItem.item_item.maxDurability;
-
-            return b1;
+            return item2 && item1.item_item == item2.item_item && !itemsToStack.Contains(item2);
         }
 
         private void StackItems(List<PickupableItem> itemsToStack, PickupableItem currentLoopItem, ref List<PickupableItem> items)
         {
-            print($"Stacking item ({itemsToStack.Count})");
+            print($"Stacking item ({itemsToStack.Count}, {currentLoopItem.item_item.name})");
 
             int newItemCount = 0;
 
@@ -145,6 +139,8 @@ namespace InventorySystem
 
             for (int y = 0; y < itemsToStack.Count; y++)
             {
+                print($"{itemsToStack[y]}");
+
                 newItemCount += itemsToStack[y].itemCount;
                 items.Remove(itemsToStack[y]);
                 InventoryGameManager.DestroyObjectForAll(itemsToStack[y].gameObject);

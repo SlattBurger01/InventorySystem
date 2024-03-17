@@ -15,14 +15,17 @@ namespace InventorySystem
         public static bool createRoom = true;
         public static string roomName = "someRoomName";
         public static TotalGameSave gameSaveToLoad = null;
+        public static int playerToSpawnId = 0; // this id is also used for player respawning (only one player per session is expected)
         // -----
+
+        public int gameSceneBuildIndex;
 
         [Tooltip("Object that will be enabled on localPlayer's dead")]
         [SerializeField] private GameObject playerRespawnMenu;
 
         [Header("PREFABS")]
-        public GameObject playerPrefab;
-        public static GameObject pPrefab;
+        public GameObject[] playerPrefabs;
+        public static GameObject[] pPrefabs;
 
         [Header("MULTIPLAYER SETTINGS")]
         public bool multiplayerMode_ = true;
@@ -38,7 +41,7 @@ namespace InventorySystem
 
         private void Awake()
         {
-            pPrefab = playerPrefab;
+            pPrefabs = playerPrefabs;
         }
 
         private void Start()
@@ -61,18 +64,22 @@ namespace InventorySystem
 
         public void InializeOfflineGame()
         {
-            PickupableItemsStacksHandler pStacksHandler = FindObjectOfType<PickupableItemsStacksHandler>();
-            if (pStacksHandler) pStacksHandler.StartLoop();
+            TryStartStackHandlerCoroutine();
 
             localPlayer = FindObjectOfType<InventoryCore>();
+        }
+
+        public static void TryStartStackHandlerCoroutine()
+        {
+            PickupableItemsStacksHandler pStacksHandler = FindObjectOfType<PickupableItemsStacksHandler>();
+            if (pStacksHandler) pStacksHandler.StartLoop();
         }
 
         public static void TrySetUpSaveAndLoadSystemAndLoadRecentSave()
         {
             print($"SSED: {gameSaveToLoad}");
 
-            if (gameSaveToLoad == null) return;
-            if (gameSaveToLoad.savesName.Length == 0) return;
+            if (gameSaveToLoad == null || gameSaveToLoad.savesName.Length == 0) return;
 
             SaveAndLoadSystem saveAndLoadSystem = FindObjectOfType<SaveAndLoadSystem>();
 
@@ -130,6 +137,8 @@ namespace InventorySystem
             else pItem.itemDurability = itemDurability;
         }
 
+        /// <summary> creates new trigger entry (based on type) and adds it into 'trigger.triggers' array </summary>
+        /// <returns></returns>
         public static EventTrigger.Entry NewEventTrigerEvent(EventTrigger trigger, EventTriggerType type)
         {
             EventTrigger.Entry entry = new EventTrigger.Entry();
@@ -173,16 +182,20 @@ namespace InventorySystem
         {
             GameObject clone = SpawnGameObjectForAll(itemToSpawn.item.object3D, position);
 
+            PickupableItem pItem = clone.GetComponent<PickupableItem>();
+
             if (multiplayerMode)
             {
-                SetItemCount(clone.GetComponent<PickupableItem>(), itemCount);
-                SetDurabilityToPItem(clone.GetComponent<PickupableItem>(), itemToSpawn.durability);
+                SetItemCount(pItem, itemCount);
+                SetDurabilityToPItem(pItem, itemToSpawn.durability);
             }
             else
             {
-                clone.GetComponent<PickupableItem>().itemCount = itemCount;
-                clone.GetComponent<PickupableItem>().item_item = itemToSpawn.item;
-                clone.GetComponent<PickupableItem>().itemDurability = itemToSpawn.durability;
+                pItem.SetValues(itemCount, itemToSpawn.durability);
+
+                /*pItem.itemCount = itemCount;
+                pItem.item_item = itemToSpawn.item;
+                pItem.itemDurability = itemToSpawn.durability;*/
             }
 
             onItemSpawned.Invoke();
@@ -190,39 +203,46 @@ namespace InventorySystem
             return clone;
         }
 
-        public static Action<Vector3> spawnPlayer_ = delegate { };
+        public static Action<Vector3, int> spawnPlayer_ = delegate { };
         public static Action<InventoryCore> onPlayerSpawned = delegate { };
 
-        public static GameObject SpawnPlayer(Vector3 position)
+        public static GameObject SpawnPlayer(Vector3 position, int prefabId)
         {
-            spawnPlayer_.Invoke(position);
+            spawnPlayer_.Invoke(position, prefabId);
             onPlayerSpawned.Invoke(spawnedObject.GetComponent<InventoryCore>());
             return spawnedObject;
         }
 
+        public void OnPlayerDead()
+        {
+            TryOpenPlayerRespawnMenu(true);
+            DestroyObjectForAll(gameObject);
+        }
+
         // --- PLAYER RESPAWNING
         /// <summary> Changes respawn menu state based on 'open' bool (if exists) </summary>
-        public void TryOpenPlayerRespawnMenu(bool open) 
+        public void TryOpenPlayerRespawnMenu(bool open)
         { 
-            if (!playerRespawnMenu) return; 
-            OpenPlayerRespawnMenu(open);
+            if (playerRespawnMenu) OpenPlayerRespawnMenu(open);
         }
 
         /// <summary> Sets menu active state and cursor lock state (based on 'open') </summary>
-        private void OpenPlayerRespawnMenu(bool open) 
+        private void OpenPlayerRespawnMenu(bool open)
         { 
             playerRespawnMenu.SetActive(open); 
             Cursor.lockState = open ? CursorLockMode.None : CursorLockMode.Locked; 
         }
 
-        /// <summary> Spawns player on 'position' </summary>
-        public void RespawnPlayer(Vector3 position)
+        /// <summary> Spawns player ('playerToSpawnId') on 'position' </summary>
+        public void RespawnPlayerDefault(Vector3 position) => RespawnPlayer(position, playerToSpawnId);
+
+        public void RespawnPlayer(Vector3 position, int id)
         {
-            SpawnPlayer(position);
-            OpenPlayerRespawnMenu(false);
+            SpawnPlayer(position, id);
+            TryOpenPlayerRespawnMenu(false);
         }
 
-        public void RespawnPlayerOnDefaultSpawnPos() => RespawnPlayer(defaultPlayerSpawnPos);
+        public void RespawnPlayerOnDefaultSpawnPos() => RespawnPlayerDefault(defaultPlayerSpawnPos);
 
         public static readonly Vector3 defaultPlayerSpawnPos = new Vector3(0, 10, 0);
     }

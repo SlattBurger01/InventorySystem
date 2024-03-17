@@ -34,7 +34,10 @@ namespace InventorySystem.PageContent
         [SerializeField] private TextMeshProUGUI currentPageText;
 
         [Header("---")]
+        [UnnecessaryProperty]
         public PageContent_ItemDisplayer selectedItemDisplayer;
+
+        [UnnecessaryProperty]
         [SerializeField] private PageContent_CategorySelector categorySelector;
 
         [HideInInspector] public Slot[] slots; // !!! THIS VALUE DOES NOT HAVE TO BE SAVED !!! ( SLOTS THAT ARE CURRENTLY VISIBLE )
@@ -55,19 +58,21 @@ namespace InventorySystem.PageContent
 
         public override void BeforePageUpdated(bool viaButton)
         {
+            Slot[] slots = GetComponentsInChildren<Slot>(true);
+
             switch (targetSlotsType)
             {
                 case SlotsType.storage:
                     slotsInteractionType = menu.openedStorageInterType;
-                    UpdateSlots(GetComponentsInChildren<Slot>(true), inventory.openedStorage ? inventory.openedStorage.maxItemCount : 0, out _);
+                    UpdateSlots(slots, inventory.openedStorage ? inventory.openedStorage.maxItemCount : 0, out _);
                     break;
 
                 case SlotsType.inventory:
-                    UpdateSlots(GetComponentsInChildren<Slot>(true), inventory.slotsCount, out startId);
+                    UpdateSlots(slots, inventory.slotsCount, out startId);
                     break;
 
                 case SlotsType.equipPositions:
-                    UpdateSlots(GetComponentsInChildren<Slot>(true), inventory.equipPositions.Length, out _);
+                    UpdateSlots(slots, inventory.equipPositions.Length, out _);
                     break;
             }
 
@@ -117,28 +122,27 @@ namespace InventorySystem.PageContent
                 slots[i].interactionType = slotsInteractionType;
                 slots[i].canFastTransfer = canFastTransfer;
                 slots[i].legalCategories = legalCategories;
+                slots[i].priorityNumber = priorityNumber;
             }
         }
 
-        /// <summary>  </summary>
+        /// <summary> Updates slots active state and custom objects </summary>
         /// <param name="targetCount"> target lenght of slots </param>
         /// <param name="startId"> id of first visible slot </param>
-        private void UpdateSlots(Slot[] slots_, int targetCount, out int startId)
+        private void UpdateSlots(Slot[] slots, int targetCount, out int startId)
         {
             startId = 0;
 
-            if (slots_.Length >= targetCount) // only one page
+            if (slots.Length >= targetCount) // only one page
             {
-                UpdateSlots_LastPage(slots_, targetCount);
+                UpdateSlots_LastPage(slots, targetCount);
             }
             else // multiple pages
             {
                 // calculates pages count 
-                float flCount = (float)targetCount / slots_.Length; // (float) is necessary
+                float flCount = (float)targetCount / slots.Length; // (float) is necessary
                 pagesCount = IsInt(flCount) ? (int)flCount : (int)flCount + 1;
                 // ---
-
-                slots = slots_;
 
                 int targetSlotCount = currentlySelectedPage == pagesCount ? targetCount - slots.Length * (currentlySelectedPage - 1) : slots.Length;
 
@@ -150,7 +154,7 @@ namespace InventorySystem.PageContent
             UpdateCustomObjects();
         }
 
-        // this seems like it works, but if it does not remove this and uncomment replaced code :)
+        /// <summary> Sets slots active state based on 'targetCount' </summary>
         private void UpdateSlots_LastPage(Slot[] slots_, int targetCount)
         {
             slots = new Slot[targetCount];
@@ -181,6 +185,7 @@ namespace InventorySystem.PageContent
             }
         }
 
+        /// <summary> Updates and sets ids for slots </summary>
         private void UpdateIds(Slot[] slots, int startId, int loopStartAt)
         {
             int idInt = loopStartAt;
@@ -190,7 +195,6 @@ namespace InventorySystem.PageContent
                 if (EquipPosition.IsNone(slots[i].equipPosition)) // IDs OF EQUIPABLE SLOTS ARE UPDATED IN Inventory.cs
                 {
                     slots[i].id = idInt + startId;
-                    slots[i].priorityNumber = priorityNumber;
 
                     idInt++;
                 }

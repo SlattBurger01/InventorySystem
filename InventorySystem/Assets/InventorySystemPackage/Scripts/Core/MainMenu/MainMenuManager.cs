@@ -6,6 +6,8 @@ using UnityEngine.SceneManagement;
 using UnityEngine.EventSystems;
 using System.Linq;
 using InventorySystem.SaveAndLoadSystem_;
+using UnityEngine.UI;
+using UnityEngine.Events;
 
 namespace InventorySystem.MainMenu
 {
@@ -14,6 +16,7 @@ namespace InventorySystem.MainMenu
         [Tooltip("Scene that is going to be loaded after game was joined (actual joining is executed in target scene)")]
         [SerializeField] private int targetSceneId = 1;
 
+        [Tooltip("The main page of menu (its parent)")]
         [SerializeField] private GameObject mainMenuDef;
 
         [Header("MENUS")]
@@ -21,9 +24,16 @@ namespace InventorySystem.MainMenu
         [SerializeField] private GameObject loadGameMenu;
         [SerializeField] private GameObject joinGameMenu;
 
+        [SerializeField] private ListContentDisplayer loadGameDisplayer;
+
+        [Header("BUTTONS")]
+        [SerializeField] private Button createGameButton;
+        [SerializeField] private Button loadGameButton;
+        [SerializeField] private Button joinGameButton;
+
         [Header("INPUTS")]
-        [SerializeField] private TMP_InputField newGameInput;
         [SerializeField] private TMP_InputField nickNameInput;
+        [SerializeField] private TMP_InputField newGameInput;
         [SerializeField] private TMP_InputField joinGameInput;
 
         private GameData gameData;
@@ -35,14 +45,29 @@ namespace InventorySystem.MainMenu
             gameData = DiskDataManager.LoadGameDataFromDisk();
         }
 
-        public void OnNewGameButtonPressed()
+        private void Start()
+        {
+            loadGameDisplayer.SetUp();
+
+            SetButton(createGameButton, delegate { OnCreateGameButtonPressed(); });
+            SetButton(loadGameButton, delegate { OnLoadGameButtonPressed(); });
+            SetButton(joinGameButton, delegate { OnJoinGameButtonPressed(); });
+        }
+
+        private void SetButton(Button button, UnityAction action)
+        {
+            button.onClick.RemoveAllListeners();
+            button.onClick.AddListener(action);
+        }
+
+        private void OnCreateGameButtonPressed()
         {
             mainMenuDef.SetActive(false);
             joinGameMenu.SetActive(false);
             createGameMenu.SetActive(true);
         }
 
-        public void OnLoadGameButtonPressed()
+        private void OnLoadGameButtonPressed()
         {
             mainMenuDef.SetActive(false);
             joinGameMenu.SetActive(false);
@@ -50,21 +75,24 @@ namespace InventorySystem.MainMenu
 
             if (gameData != null)
             {
+                List<GameObject> clones = new List<GameObject>(gameData.totalGameSavesNames.Length);
+
                 for (int i = 0; i < gameData.totalGameSavesNames.Length; i++)
                 {
-                    GameObject clone = Instantiate(gameToLoadPrefab, loadGameMenu.transform);
-                    clone.transform.localPosition = new Vector2(0, i * 120);
+                    GameObject clone = Instantiate(gameToLoadPrefab, loadGameDisplayer.contentParent);
                     clone.GetComponentInChildren<TextMeshProUGUI>().text = gameData.totalGameSavesNames[i];
 
                     EventTrigger trigger = clone.AddComponent<EventTrigger>();
 
-                    EventTrigger.Entry onClick = new EventTrigger.Entry();
-                    onClick.eventID = EventTriggerType.PointerClick;
+                    EventTrigger.Entry onClick = InventoryGameManager.NewEventTrigerEvent(trigger, EventTriggerType.PointerClick);
+
                     int tempInt = i;
                     onClick.callback.AddListener(delegate { LoadGameSave(gameData.totalGameSavesNames[tempInt]); });
 
-                    trigger.triggers.Add(onClick);
+                    clones.Add(clone);
                 }
+
+                loadGameDisplayer.SetDisplayedContent_(clones);
             }
         }
 
@@ -81,7 +109,7 @@ namespace InventorySystem.MainMenu
             SceneManager.LoadScene(1);
         }
 
-        public void OnJoinGameButtonPressed()
+        private void OnJoinGameButtonPressed()
         {
             mainMenuDef.SetActive(false);
             loadGameMenu.SetActive(false);

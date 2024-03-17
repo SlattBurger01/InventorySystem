@@ -2,11 +2,14 @@ using InventorySystem.Items;
 using InventorySystem.SaveAndLoadSystem_;
 using Photon.Pun;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+using static UnityEditor.Progress;
 
 namespace InventorySystem.PhotonPun
 {
     [RequireComponent(typeof(InventoryGameManager))]
-    public class PhotonInventoryGameManager : MonoBehaviour
+    public class PhotonInventoryGameManager : MultiplayerInventoryGameManager
     {
         private static InventoryGameManager inventoryGameManager;
         private PhotonView view;
@@ -19,10 +22,10 @@ namespace InventorySystem.PhotonPun
             InventoryGameManager.updateIsMasterclientBool += UpdateIsMasterClient;
             InventoryGameManager.spawnGameObject += SpawnGameObject;
             InventoryGameManager.setItemCount += SetItemCount;
-            InventoryGameManager.setDurabilityToPItem += SetDurabilityToPItem;
+            InventoryGameManager.setDurabilityToPItem += SetItemDurability;
             InventoryGameManager.spawnPlayer_ += SpawnLocalPlayer;
             InventoryGameManager.inializeMultiplayerGame += InializeMultiplayerGame;
-            InventoryGameManager.destroyObject += DestroyObject;
+            InventoryGameManager.destroyObject += DestroyGameobject;
             InventoryGameManager.setPlayerNickname += SetPlayersNickname;
             InventoryGameManager.syncIDamagableTakeDamage += SyncIDamagableTakeDamage;
         }
@@ -46,7 +49,7 @@ namespace InventorySystem.PhotonPun
 
         public static void UpdateIsMasterClient() { InventoryGameManager.m_isMasterClient = PhotonNetwork.IsMasterClient; }
 
-        private void DestroyObject(GameObject obj)
+        protected override void DestroyGameobject(GameObject obj)
         {
             PhotonView view_ = obj.GetComponent<PhotonView>();
 
@@ -59,21 +62,33 @@ namespace InventorySystem.PhotonPun
         [PunRPC]
         private void DestroyObjectF(int viewId) => PhotonNetwork.Destroy(PhotonView.Find(viewId));
 
-        private void SetItemCount(PickupableItem item, int itemCount)
+        protected override void SetItemCount(PickupableItem pItem, int itemCount)
+        {
+            PhotonView view_ = pItem.GetComponent<PhotonView>();
+
+            view.RPC("SetItemCountFRPC", RpcTarget.All, view_.ViewID, itemCount);
+        }
+
+        /*private void SetItemCount(PickupableItem item, int itemCount)
         {
             PhotonView view_ = item.GetComponent<PhotonView>();
 
-            view.RPC("SetItemCountF", RpcTarget.All, view_.ViewID, itemCount);
-        }
+            view.RPC("SetItemCountFRPC", RpcTarget.All, view_.ViewID, itemCount);
+        }*/
 
         [PunRPC]
-        private void SetItemCountF(int viewId, int itemCount) => PhotonView.Find(viewId).GetComponent<PickupableItem>().itemCount = itemCount;
+        private void SetItemCountFRPC(int viewId, int itemCount) 
+        {
+            PickupableItem pItem = PhotonView.Find(viewId).GetComponent<PickupableItem>();
+
+            base.SetItemCountF(pItem, itemCount);
+        }
 
         private static void SpawnGameObject(GameObject prefab, Vector3 position) { InventoryGameManager.spawnedObject = SpawnGameObjectF(prefab, position); }
 
-        private static GameObject SpawnGameObjectF(GameObject prefab, Vector3 position) { return PhotonNetwork.Instantiate(prefab.name, position, Quaternion.identity); }
+        private static GameObject SpawnGameObjectF(GameObject prefab, Vector3 position) => PhotonNetwork.Instantiate(prefab.name, position, Quaternion.identity);
 
-        private void SetDurabilityToPItem(PickupableItem pItem, float itemDurability)
+        protected override void SetItemDurability(PickupableItem pItem, float itemDurability)
         {
             view.RPC("SetDurabilityToPItemF", RpcTarget.All, pItem.GetComponent<PhotonView>().ViewID, itemDurability);
         }
@@ -82,10 +97,10 @@ namespace InventorySystem.PhotonPun
         private void SetDurabilityToPItemF(int viewId, float durability)
         {
             PickupableItem item = PhotonView.Find(viewId).GetComponent<PickupableItem>();
-            item.itemDurability = durability;
+            base.SetItemDurabilityF(item, durability);
         }
 
-        private void SetPlayersNickname(InventoryCore player, string name)
+        public override void SetPlayersNickname(InventoryCore player, string name)
         {
             view.RPC("SetPlayersNicknameF", RpcTarget.AllBuffered, player.GetComponent<PhotonView>().ViewID, name);
         }
@@ -97,9 +112,7 @@ namespace InventorySystem.PhotonPun
 
             InventoryCore player = PhotonView.Find(viewId).GetComponent<InventoryCore>();
 
-            player.SetNickname(name);
-
-            player.GetComponent<SaveObject>().saveId = name;
+            base.SetPlayersNicknameF(player, name);
         }
 
         private void SyncIDamagableTakeDamage(MonoBehaviour targetViewComp, float damage)
@@ -114,8 +127,17 @@ namespace InventorySystem.PhotonPun
 
         public void OnRoomJoined(bool offline)
         {
+            if (SceneManager.GetActiveScene().buildIndex == inventoryGameManager.gameSceneBuildIndex) InializeGameScene(offline);
+
+            onRoomJoined.Invoke();
+        }
+
+        private void InializeGameScene(bool offline)
+        {
+            print("Inializing game scene!");
+
             // SPAWN PLAYER BEFORE LOADING DATA
-            if (offline) InventoryGameManager.SpawnPlayer(InventoryGameManager.defaultPlayerSpawnPos);
+            if (!offline) InventoryGameManager.SpawnPlayer(InventoryGameManager.defaultPlayerSpawnPos, InventoryGameManager.playerToSpawnId);
             else inventoryGameManager.localPlayer = FindObjectOfType<InventoryCore>();
 
             SetPlayersNickname(inventoryGameManager.localPlayer, InventoryGameManager.playersName);
@@ -123,7 +145,7 @@ namespace InventorySystem.PhotonPun
             if (PhotonNetwork.IsMasterClient)
             {
                 InventoryGameManager.TrySetUpSaveAndLoadSystemAndLoadRecentSave();
-                FindObjectOfType<PickupableItemsStacksHandler>().StartLoop();
+                InventoryGameManager.TryStartStackHandlerCoroutine();
             }
             else
             {
@@ -139,11 +161,9 @@ namespace InventorySystem.PhotonPun
         private void OnPlayerJoined(string saveId) // THIS IS SEND ONLY TO MASTERCLIENT
         {
             Console.Add($"On player joined! {saveId}", FindObjectOfType<Console>());
-
             print("On player joined");
 
-            GameSave tempSave = FindObjectOfType<SaveAndLoadSystem>().SaveGame_("TempSave");
-            FindObjectOfType<SaveAndLoadSystem>().LoadGameForCustomPlayer(tempSave, saveId);
+            base.OnPlayerJoinedF(saveId);
         }
 
         public static bool IsMine(int viewId) { return PhotonView.Find(viewId).IsMine; }
@@ -160,9 +180,9 @@ namespace InventorySystem.PhotonPun
             return -1;
         }
 
-        public static void SpawnLocalPlayer(Vector3 position)
+        public static void SpawnLocalPlayer(Vector3 position, int prefabId)
         {
-            GameObject clone = SpawnGameObjectF(InventoryGameManager.pPrefab, position);
+            GameObject clone = SpawnGameObjectF(InventoryGameManager.pPrefabs[prefabId], position);
             inventoryGameManager.localPlayer = clone.GetComponent<InventoryCore>();
 
             InventoryGameManager.spawnedObject = clone;

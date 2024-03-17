@@ -24,7 +24,7 @@ namespace InventorySystem.PhotonPun
             print("Connecting to photonNetwork ( TestGameManager script )");
 
             creator.CreateOfflineRoom("OfflineRoom");
-            manager.InializeOfflineGame();
+            //manager.InializeOfflineGame(); -- game is being inialized from photon extension
         }
 
         public void JoinRoomFromScrach(string roomName_)
@@ -86,9 +86,9 @@ namespace InventorySystem.PhotonPun
             Console.Add($"ROOM {roomName} JOINED SUCESSFULLY", FindObjectOfType<Console>(), ConsoleCategory.Multiplayer);
 
             LoadingScreensHandler loadingScreensHandler = FindObjectOfType<LoadingScreensHandler>();
-            if(loadingScreensHandler) loadingScreensHandler.EnableInializeGameLoadingScreen(false);
+            if (loadingScreensHandler) loadingScreensHandler.EnableInializeGameLoadingScreen(false);
 
-            FindObjectOfType<PhotonInventoryGameManager>().OnRoomJoined(!offline);
+            FindObjectOfType<PhotonInventoryGameManager>().OnRoomJoined(offline);
         }
 
         public override void OnJoinRoomFailed(short returnCode, string message)

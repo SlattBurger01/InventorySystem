@@ -16,17 +16,20 @@ public class DragAndSetAttributeDrawer : PropertyDrawer
 
         switch (evt.type)
         {
-            case EventType.DragPerform:
-                if (!position.Contains(evt.mousePosition)) return;
-
-                DragAndDrop.visualMode = DragAndDropVisualMode.Copy;
-
-                if (evt.type == EventType.DragPerform)
-                {
-                    DragAndDrop.AcceptDrag();
-                    DragAndSetAttribute.OnDragCompleted(property, DragAndDrop.objectReferences);
-                }
+            case EventType.DragExited or EventType.DragPerform:
+                TryRegisterDrag(position, property, evt);
                 break;
+
         }
+    }
+
+    private void TryRegisterDrag(Rect pos, SerializedProperty prop, Event evt)
+    {
+        if (!pos.Contains(evt.mousePosition)) return;
+
+        DragAndDrop.visualMode = DragAndDropVisualMode.Copy;
+
+        DragAndDrop.AcceptDrag();
+        DragAndSetAttribute.OnDragCompleted(prop, DragAndDrop.objectReferences);
     }
 }

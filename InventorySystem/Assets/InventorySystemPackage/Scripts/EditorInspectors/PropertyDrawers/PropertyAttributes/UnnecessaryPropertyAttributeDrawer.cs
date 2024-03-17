@@ -10,7 +10,7 @@ public class UnnecessaryPropertyAttributeDrawer : PropertyDrawer
 
         if (id == -1 && !CustomInspectorHelper.CreateCustomPropertyField(position, property, label)) return;
 
-        GUIContent fLabel = new GUIContent($"({label.text})");
+        GUIContent fLabel = CustomInspectorHelper.CustomInspectors ? new GUIContent($"({label.text})") : label;
 
         if (id != -1)
         {

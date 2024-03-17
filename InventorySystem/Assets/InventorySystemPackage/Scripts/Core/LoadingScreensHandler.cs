@@ -6,6 +6,12 @@ namespace InventorySystem
 {
     public class LoadingScreensHandler : MonoBehaviour
     {
+        [Header("Build-in screens")]
+        [SerializeField] [UnnecessaryProperty] private GameObject inializeGameScreen;
+        [SerializeField] [UnnecessaryProperty] private GameObject loadGameScreen;
+        [SerializeField] [UnnecessaryProperty] private GameObject syncGameScreen;
+
+        [Header("Custom screens")]
         [SerializeField] private GameObject[] loadingScreens;
 
         private void Awake()
@@ -19,8 +25,13 @@ namespace InventorySystem
             Console.Add($"Set active screen: {loadingScreen}, {enable}", FindObjectOfType<Console>()); 
         }
 
-        public void EnableInializeGameLoadingScreen(bool enable) => EnableLoadingScreen(0, enable);
-        public void EnableLoadGameLoadingScreen(bool enable) => EnableLoadingScreen(1, enable);
-        public void EnableSyncGameLoadingScreen(bool enable) => EnableLoadingScreen(2, enable);
+        private void EnableLoadingScreenF(GameObject obj, bool enable)
+        {
+            if (obj) obj.SetActive(enable);
+        }
+
+        public void EnableInializeGameLoadingScreen(bool enable) => EnableLoadingScreenF(inializeGameScreen, enable);
+        public void EnableLoadGameLoadingScreen(bool enable) => EnableLoadingScreenF(loadGameScreen, enable);
+        public void EnableSyncGameLoadingScreen(bool enable) => EnableLoadingScreenF(syncGameScreen, enable);
     }
 }

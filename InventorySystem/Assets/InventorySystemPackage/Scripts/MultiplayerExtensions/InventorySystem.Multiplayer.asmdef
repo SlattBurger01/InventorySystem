@@ -1,11 +1,8 @@
 {
-    "name": "InventorySystem.PhotonExtentions",
+    "name": "InventorySystem.Multiplayer",
     "rootNamespace": "",
     "references": [
-        "GUID:57c32fc907df0f54e8e6e8f0d2488336",
-        "GUID:831409e8f9d13b5479a3baef9822ad34",
-        "GUID:c21e0af72d4504d4aa6023c18173f273",
-        "GUID:d5fc5b3f2695b594399cfd131ec1f165"
+        "GUID:c21e0af72d4504d4aa6023c18173f273"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
